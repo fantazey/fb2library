@@ -1,0 +1,65 @@
+{% extends "main/index.html" %}
+{% load rebase_url %}
+{% block content %}
+<h1>Книги в формате fb2 бесплатно</h1>
+<div id='book-content'>
+    {% for book in books %}
+        <div class="post">
+            <div style="display:inline;">
+                <a href="/book/details/{{ book.id }}/" title="{{ book.title }}">
+                    <span class="cover cover-book">
+                        {% if book.image %}
+                          <img height="185" alt="{{ book.title }}" src="{{ book.image.url|rebase_url }}" class="cover-image" itemprop="image">
+                        {% else %}
+                          <img height="185" alt="{{ book.title }}" src="{{ ''|rebase_url:'empty' }}" class="cover-image" itemprop="image">
+                        {% endif %}
+                    </span>
+                </a>
+            </div>
+            <div class="btitle">
+                <a href="/book/details/{{ book.id }}" title="{{ book.title }}">
+                    {{ book.title }}
+                </a>
+            </div>
+            <div class="bauthor">
+                {% for author in book.authors.all %}
+                    <span style="display: block">
+                        <a href="/book/author/{{ author.id }}/books/" title="{{ author.title }}">
+                            {{ author }}
+                        </a>
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    <div class="navigation">
+        <div class="n_arrow">
+            {% if books.has_previous %}
+                &larr;&nbsp;
+                <a href="?page={{ books.previous_page_number }}">
+                    предыдущая
+                </a> |
+            {% endif %}
+            {%  if books.has_next %}
+                <a href="?page={{ books.next_page_number }}">
+                    следующая
+                </a>
+                &nbsp;&rarr;
+            {% endif %}
+        </div>
+        <div class="clr"></div>
+        <div class="n_pages">
+            {% for page in books.paginator.page_range %}
+                {% if page == books.number %}
+                    <span>{{ page }}</span>
+                {% else %}
+                    <a href="?page={{ page }}">
+                       {{ page }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="rast-nav"></div>
+</div>
+{% endblock %}

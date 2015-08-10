@@ -1,0 +1,20 @@
+<VirtualHost *:80>
+    ServerName fictionbook.fantazey.ru
+    ServerAdmin fantazey@gmail.com
+    WSGIScriptAlias / /var/www/library/fb2library/wsgi.py
+    LogLevel warn
+    ErrorLog /var/log/apache2/library_error
+    CustomLog /var/log/apache2/library_access combined
+    Options Indexes ExecCGI FollowSymLinks
+    <Directory /var/www/library>
+	<Files wsgi.py>
+	    Order deny,allow
+	    allow from all
+	</Files>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride None
+        Order allow,deny
+        allow from all
+    </Directory>
+
+</VirtualHost>

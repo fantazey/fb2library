@@ -1,0 +1,47 @@
+{% extends "main/index.html" %}
+{% block content %}
+<h1>Авторы</h1>
+<div id='book-content'>
+    {% for author in authors %}
+        <div class="post">
+            <div style="display:inline;">
+                Тут возможно будет фото
+            </div>
+            <div class="btitle">
+                <a href="/book/author/{{ author.id }}/books/" title="{{ author.title }}">
+                    {{ author }}
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="navigation">
+        <div class="n_arrow">
+            {% if authors.has_previous %}
+                &larr;&nbsp;
+                <a href="?page={{ authors.previous_page_number }}">
+                    предыдущая
+                </a> |
+            {% endif %}
+            {%  if authors.has_next %}
+                <a href="?page={{ authors.next_page_number }}">
+                    следующая
+                </a>
+                &nbsp;&rarr;
+            {% endif %}
+        </div>
+        <div class="clr"></div>
+        <div class="n_pages">
+            {% for page in authors.paginator.page_range %}
+                {% if page == authors.number %}
+                    <span>{{ page }}</span>
+                {% else %}
+                    <a href="?page={{ page }}">
+                       {{ page }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="rast-nav"></div>
+</div>
+{% endblock %}
