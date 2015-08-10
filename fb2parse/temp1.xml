@@ -1,0 +1,65 @@
+<description>
+  <title-info>
+   <genre>sci_history</genre>
+   <author>
+    <first-name>Линн</first-name>
+    <last-name>Пикнетт</last-name>
+   </author>
+   <author>
+    <first-name>Клайв</first-name>
+    <last-name>Принс</last-name>
+   </author>
+   <book-title>Леонардо да Винчи и Братство Сиона</book-title>
+   <annotation>
+    <p>Тысячелетиями человеческая история творилась не только на полях сражений и в тронных залах, но и в подземельях могущественных тайных орденов. </p>
+    <p>Проведя масштабное историческое расследование, изучив множество архивных материалов по оккультизму, масонству, деятельности катаров и тамплиеров, Линн Пикнетт и Клайв Принс обнаружили в них следы религии, берущей начало во времена Христа, две тысячи лет развивавшейся параллельно христианству и претендующей на мировое господство. Братство Сиона, магистрами которого были такие знаменитости, как Леонардо да Винчи, Сандро Боттичелли, Виктор Гюго, Жан Кокто, в течение веков сохраняло секретную летопись Великой ереси, закодированной в произведениях искусства и готических соборах Европы. </p>
+    <p>Многие громкие события европейской и мировой истории, по мнению авторов данной книги, были лишь отголосками ожесточенной секретной войны между христианской церковью и претендующим на обладание сакральной истиной могущественным тайным орденом. Авторы представляют убедительные доказательства того, что Братство Сиона сохранилось до наших дней и продолжает активную деятельность. </p>
+    <p>Книга развивает тему, затронутую в «Коде да Винчи» Дэна Брауна, «Святой Крови и Святом Граале» Бейджента и Ли, но ее авторы пошли дальше многих исследователей и сделали выводы, которые способны ошеломить даже подготовленных читателей.</p>
+    <p><emphasis>lenok555</emphasis>: Файл содержит введение и первую часть книги из-за огромного количества примечаний.</p>
+    <p>Вторая часть в другом файле.</p>
+   </annotation>
+      <sequence name="Raine Benares" number="5"/>
+      <sequence name="Хроники Айсмарка" number="1"/>
+      <sequence name="Голубиные перья"/>
+   <date></date>
+   <lang>ru</lang>
+  </title-info>
+  <src-title-info>
+   <genre>sci_history</genre>
+   <author>
+    <first-name>Lynn</first-name>
+    <last-name>Picknett</last-name>
+   </author>
+   <author>
+    <first-name>Clive</first-name>
+    <last-name>Prince</last-name>
+   </author>
+   <book-title>The Templar Revelation</book-title>
+   <date></date>
+   <lang>en</lang>
+   <src-lang>en</src-lang>
+  </src-title-info>
+  <document-info>
+   <author>
+    <first-name>Елена</first-name>
+    <last-name>Байрашева</last-name>
+    <email>lenok555@mtu-net.ru</email>
+   </author>
+   <program-used>FB Editor v2.0</program-used>
+   <date value="2009-12-24">24 December 2009</date>
+   <id>6A71BC5C-2B37-478B-B51F-64ECF5D89D2D</id>
+   <version>1.0</version>
+   <history>
+    <p>1.0 — создание файла fb2 — Елена Байрашева (<a l:href="mailto:lenok555@mtu-net.ru">lenok555@mtu-net.ru</a>)</p>
+   </history>
+  </document-info>
+  <publish-info>
+   <book-name>Леонардо да Винчи и Братство Сиона</book-name>
+   <publisher>Эксмо</publisher>
+   <city>Москва</city>
+   <year>2006</year>
+   <isbn>5-699-13582-0</isbn>
+   <sequence name="Тайны древних цивилизаций"/>
+  </publish-info>
+  <custom-info info-type="">© Lynn Picknett &amp; Clive Prince 1997 © - 544 с: ил. - (Тайны древних цивилизаций).</custom-info>
+ </description>
