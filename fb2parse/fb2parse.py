@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from BeautifulSoup import BeautifulStoneSoup
+from genres import genres_types
 
 __author__ = 'Andrew'
 
@@ -126,7 +127,7 @@ class BookFile(CommonTag):
         if encoding is None:
             return None
         self.soup = BeautifulStoneSoup(
-            self.book,
+            self.xml,
             fromEncoding=encoding,
             convertEntities=BeautifulStoneSoup.ALL_ENTITIES
         )
@@ -140,11 +141,7 @@ class BookFile(CommonTag):
             self.book.cover = cover
         # todo: реализовать метод проверки данных
         res = self.book.validate()
-        if res:
-            # заканчиваем
-            return self.book
-        else:
-            return None
+        return self.book
 
 
 class CoverPage(object):
@@ -160,6 +157,7 @@ class CoverPage(object):
 
 class Author(object):
     """ Класс автора.Автор """
+
     def __init__(self, first="", last="", middle=""):
         # имя
         self.first_name = first
@@ -167,6 +165,15 @@ class Author(object):
         self.last_name = last
         # отчество
         self.middle_name = middle
+
+    def __repr__(self):
+        return u"".join([
+            self.last_name,
+            u"-",
+            self.first_name,
+            u"-",
+            self.middle_name
+        ]).encode('utf-8')
 
     def format_names(self):
         """
@@ -195,8 +202,8 @@ class Translator(Author):
     Поля идентичны классу Author, поэтому пустой
     Разделение идет чисто по содержимому
     """
-    def __init__(self):
-        super(Translator, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(Translator, self).__init__(*args, **kwargs)
 
 
 class Genre(object):
@@ -205,7 +212,16 @@ class Genre(object):
         # код жанра, ex: love_contemporary
         self.code = code
         # описание, на самом деле будет пустым почти постоянно, скорее всего
-        self.name = ""
+        if code in genres_types.keys():
+            self.name = genres_types[code]
+        else:
+            self.name = None
+
+    def __repr__(self):
+        if self.name is not None:
+            return self.name.encode("utf-8")
+        else:
+            return self.code.encode("utf-8")
 
 
 class Sequence(object):
@@ -215,6 +231,9 @@ class Sequence(object):
         self.name = name
         # номер книги в серии
         self.number = ""
+
+    def __repr__(self):
+        return self.name.encode("utf-8")
 
 
 class Book(CommonTag):
@@ -250,6 +269,9 @@ class Book(CommonTag):
         self.encoding = ""
         # признак валидности книги
         self.valid = False
+
+    def __repr__(self):
+        return self.title.encode("utf-8")
 
     def parse(self):
         """
@@ -372,8 +394,6 @@ class Book(CommonTag):
         # Аннтотация
         if self.title_info.annotation and self.title_info.annotation.contents:
             self.annotation = self.title_info.annotation.__str__()
-        # обложка
-        return False
 
     def parse_publisher(self):
         """
@@ -407,6 +427,9 @@ class Publisher(object):
     def __init__(self, name=""):
         self.name = name
 
+    def __repr__(self):
+        return self.name.encode("utf-8")
+
 
 class PublishInfo(object):
     """
@@ -415,3 +438,7 @@ class PublishInfo(object):
     def __init__(self):
         self.publisher = self.year = self.city = self.isbn = None
         self.sequences = []
+
+    def __repr__(self):
+        if self.publisher:
+            return self.publisher.__repr__()
