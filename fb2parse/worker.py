@@ -9,8 +9,6 @@ import hashlib
 from base64 import b64decode
 
 import django
-
-
 os.environ["DJANGO_SETTINGS_MODULE"] = "fb2lib.settings"
 django.setup()
 from book.models import *

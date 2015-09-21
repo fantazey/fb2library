@@ -2,6 +2,7 @@
 import os
 from BeautifulSoup import BeautifulStoneSoup
 from genres import genres_types
+from hashlib import md5
 
 __author__ = 'Andrew'
 
@@ -62,6 +63,12 @@ class BookFile(CommonTag):
         self.file = path
         # объект BeautifulStoneSoup и разобраная книга
         self.soup = self.book = None
+        # новый путь для сохранения
+        self.new_path = ""
+        # новое имя файла
+        self.new_name = ""
+        # md5 hash от текста книги
+        self.hash = ""
 
     def get_encoding(self):
         """Получить кодировку"""
@@ -139,9 +146,26 @@ class BookFile(CommonTag):
         cover = self.get_cover()
         if cover is not None:
             self.book.cover = cover
-        # todo: реализовать метод проверки данных
-        res = self.book.validate()
-        return self.book
+        self.new_name, self.new_path = self.get_new_name_path()
+        self.hash = md5(self.xml).hexdigest()
+        return True
+
+    def get_new_name_path(self):
+        """Получить путь к файлу построенный на фамилии автора и названии книги"""
+        stops = ',:><|?*/\n\\"'
+        title = self.book.title
+        if any([char in title for char in stops]):
+            title = reduce(lambda res, y: res.replace(y, '-'), stops, title)
+        author = self.book.authors[0]
+        name = author.last_name + ' ' + author.first_name + " - " + title + ".fb2"
+        author_dir = author.last_name + ' ' + author.first_name
+        lang = self.book.lang if self.book.lang is not None else '#'
+        if len(author.last_name) > 0:
+            letter = author.last_name[0].upper()
+        else:
+            letter = '#'
+        path = os.path.join(lang, letter, author_dir, name)
+        return name, path
 
 
 class CoverPage(object):
@@ -240,15 +264,15 @@ class Book(CommonTag):
     """ Класс книги """
     def __init__(self):
         # Название книги
-        self.title = ""
+        self.title = None
         # аннотация
-        self.annotation = ""
+        self.annotation = None
         # дата
-        self.date = ""
+        self.date = None
         # язык
-        self.lang = ""
+        self.lang = None
         # исходных язык
-        self.src_lang = ""
+        self.src_lang = None
         # обложка хранится base64 строкой
         self.cover = None
         # список авторов
@@ -266,9 +290,7 @@ class Book(CommonTag):
         # информация об издательстве и издании
         self.publisher = None
         # кодировка книги
-        self.encoding = ""
-        # признак валидности книги
-        self.valid = False
+        self.encoding = None
 
     def __repr__(self):
         return self.title.encode("utf-8")
@@ -299,13 +321,15 @@ class Book(CommonTag):
             object_class = Translator
             field = 'translators'
         else:
-            return None
+            return
         authors_list = self.title_info.findAll(_type)
-        for _author in authors_list:
-            # вытаскиваем словарь данных
-            data = self.get_author_names(_author)
-            # если есть Имя и Фамилия - сохраняем
-            if len(data['first']) > 0 and len(data['last']):
+        if len(authors_list) == 0 and _type == 'author':
+            author = object_class("#", "#", "#")
+            self.__dict__[field].append(author)
+        else:
+            for _author in authors_list:
+                # вытаскиваем словарь данных
+                data = self.get_author_names(_author)
                 author = object_class(
                     data['first'],
                     data['last'],
@@ -313,8 +337,6 @@ class Book(CommonTag):
                 )
                 author.format_names()
                 self.__dict__[field].append(author)
-            else:
-                continue
 
     @staticmethod
     def get_author_names(node=None):
@@ -328,6 +350,8 @@ class Book(CommonTag):
         for n in names:
             if node.find(n + '-name') and node.find(n + '-name').string:
                 data[n] = node.find(n + '-name').string.strip()
+            else:
+                data[n] = ''
         return data
 
     def parse_genres(self):
@@ -338,7 +362,6 @@ class Book(CommonTag):
         for genre in self.title_info.findAll('genre'):
             if genre.string:
                 self.genres.append(Genre(genre.string.strip()))
-        return True
 
     def get_sequences(self, node):
         """
@@ -367,7 +390,6 @@ class Book(CommonTag):
         :return: True если не было ошибок при разборе
         """
         self.sequences = self.get_sequences(self.title_info)
-        return True
 
     @staticmethod
     def get_tag_text(tag_name, node):
@@ -402,22 +424,15 @@ class Book(CommonTag):
         :return: True если не было ошибок при разборе
         """
         publisher_info = PublishInfo()
-        publisher_name = self.get_tag_text('publisher', self.publish_info)
-        if publisher_name is not None:
-            publisher_info.publisher = Publisher(publisher_name)
-        publisher_info.city = self.get_tag_text('city', self.publish_info)
-        publisher_info.year = self.get_tag_text('year', self.publish_info)
-        publisher_info.isbn = self.get_tag_text('isbn', self.publish_info)
-        publisher_info.sequences = self.get_sequences(self.publish_info)
+        if self.publish_info:
+            publisher_name = self.get_tag_text('publisher', self.publish_info)
+            if publisher_name is not None:
+                publisher_info.publisher = Publisher(publisher_name)
+            publisher_info.city = self.get_tag_text('city', self.publish_info)
+            publisher_info.year = self.get_tag_text('year', self.publish_info)
+            publisher_info.isbn = self.get_tag_text('isbn', self.publish_info)
+            publisher_info.sequences = self.get_sequences(self.publish_info)
         self.publisher = publisher_info
-        return False
-
-    def validate(self):
-        """
-        Валидация полей книги. Todo: реализовать
-        """
-        self.valid = False
-        return False
 
 
 class Publisher(object):

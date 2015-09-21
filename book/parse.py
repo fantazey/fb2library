@@ -3,7 +3,9 @@ __author__ = 'Andrew'
 import os
 from datetime import datetime
 from Queue import Queue
-import worker
+
+from fb2parse import worker
+
 # Начало библиотеки. Все будет складываться сюда.
 #PROJECT_ROOT = '/home/andrew/projects/_fb2to'
 #SOURCE = '/home/andrew/projects/_fb2from'
