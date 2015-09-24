@@ -291,6 +291,7 @@ class Book(CommonTag):
         self.publisher = None
         # кодировка книги
         self.encoding = None
+        self.uuid = None
 
     def __repr__(self):
         return self.title.encode("utf-8")

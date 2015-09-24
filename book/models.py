@@ -107,6 +107,7 @@ class Book(models.Model):
     md5 = models.CharField(u'Hash', max_length=150, default='000')
     publisher = models.ManyToManyField(Publisher, verbose_name=u'Издатель', null=True)
     translator = models.ManyToManyField(Translator, related_name='translators', verbose_name=u'Переводчик', null=True)
+    uuid = models.CharField(u"UUID", max_length=30, null=True, blank=True)
 
     class Meta:
         verbose_name = u'Книга'
