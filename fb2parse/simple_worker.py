@@ -4,6 +4,7 @@ from fb2parse import BookFile
 from hashlib import md5
 from binascii import Error as base64PaddingError
 from shutil import move as shumove
+from book.models import *
 """
 Модуль в одном потоке бежит по файловой системе, читает файлы, перекладывает их в другое место
 сразу же добавляет в базу, упаковывает их
@@ -80,6 +81,7 @@ def main():
             res = move_book(book_file)
             if not res:
                 continue
+            save_book(book_file)
             # пока картинки не сохраняем
             if book_file.book.cover is not None:
                 covername = book_file.hash
@@ -93,7 +95,9 @@ def main():
                         # todo: fix padding
                         continue
 
-            # res = save_cover(book_file)
+
+def save_book(book_file):
+    pass
 
 if __name__ == "__main__":
     main()
