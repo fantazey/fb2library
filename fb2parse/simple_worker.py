@@ -4,10 +4,10 @@ from fb2parse import BookFile
 from hashlib import md5
 from binascii import Error as base64PaddingError
 from shutil import move as shumove
-"""
-Модуль в одном потоке бежит по файловой системе, читает файлы, перекладывает их в другое место
-сразу же добавляет в базу, упаковывает их
-"""
+
+# Модуль в одном потоке бежит по файловой системе, читает файлы, перекладывает их в другое место
+# сразу же добавляет в базу, упаковывает их
+
 __author__ = 'Andrew'
 
 # todo: 4 проверка дубликатов

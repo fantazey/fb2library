@@ -6,15 +6,15 @@ from hashlib import md5
 
 __author__ = 'Andrew'
 
-"""
-    Модуль позволяющий парсить fb2 книги в объекты классов представленных
-    в модуле
-    http://www.fictionbook.org/index.php/%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5_%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B0_FB2_%D0%BE%D1%82_Sclex
-"""
+#    Модуль позволяющий парсить fb2 книги в объекты классов представленных
+#    в модуле
+#    http://www.fictionbook.org/index.php/%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5_%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B0_FB2_%D0%BE%D1%82_Sclex
+#
 
 
 class CommonTag(object):
     """
+    Примесь
     Общие методы работы с обьектами Tag
     """
     @staticmethod
