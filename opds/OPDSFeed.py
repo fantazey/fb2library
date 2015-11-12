@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 __author__ = 'andrew'
 from django.utils.feedgenerator import Atom1Feed, SyndicationFeed, rfc3339_date, get_tag_uri
 
+# Модуль для реализации классов OPDS Feed на основе Django Syndication Framework
 
 class OPDS(Atom1Feed):
     mime_type = 'application/atom+xml; charset=utf-8'
@@ -9,7 +11,6 @@ class OPDS(Atom1Feed):
     def __init__(self, alt_link=None, *args, **kwargs):
         super(OPDS, self).__init__(*args, **kwargs)
         self.feed['alt_link'] = alt_link
-
 
     def add_root_elements(self, handler):
         handler.addQuickElement("title", self.feed['title'])

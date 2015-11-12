@@ -5,7 +5,7 @@ from django.contrib.syndication.views import Feed
 from django.shortcuts import get_object_or_404
 from opds.models import *
 from book.models import *
-from book.OPDSFeed import OPDS
+from opds.OPDSFeed import OPDS
 
 
 class OPDSFeed(Feed):
