@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 from fb2parse import BookFile
-from hashlib import md5
 from binascii import Error as base64PaddingError
 from shutil import move as shumove
+from book.models import *
 
 # Модуль в одном потоке бежит по файловой системе, читает файлы, перекладывает их в другое место
 # сразу же добавляет в базу, упаковывает их
@@ -96,7 +96,65 @@ def main():
 
 
 def save_book(book_file):
-    pass
+    """
+    book_file instance ob BookFile
+    """
+    # debug
+    book_file = BookFile('_')
+    book = book_file.book
+    # Добавляем книгу
+    if not Book.objects.filter(md5=book_file.hash).exists():
+        obj = Book.objects.create(
+            title=book_file.book.title,
+            annotation=book_file.book.annotation,
+            date=book_file.book.date,
+            book_file=book_file.new_path,
+            md5=book_file.hash
+        )
+        if book_file.book.cover is not None:
+            obj.image = os.path.join(book_file.hash[:4], book_file.hash)
+        obj.save()
+    else:
+        obj = None
+    if not Language.objects.filter(code=book.lang).exists():
+        book_lang = Language.objects.create(code=book.lang)
+    else:
+        book_lang = Language.objects.get(code=book.lang)
+    if not Language.objects.filter(code=book.src_lang).exists():
+        book_src_lang = Language.objects.create(code=book.src_lang)
+    else:
+        book_src_lang = Language.objects.get(code=book.src_lang)
+    if obj:
+        obj.lang = book_lang
+        obj.src_lang = book_src_lang
+        obj.save()
+
+    b_genres = book.genres
+    # Создаем жанры прочитанные в книге
+    for b_genre in b_genres:
+        genre, cr = Genre.objects.get_or_create(code=b_genre.code, name=b_genre.name)
+        if book:
+            obj.genre.add(genre)
+        # Создаем авторов
+
+    for _author in book.authors:
+        author, cr = Author.objects.get_or_create(first_name=_author.first_name,
+                                                  middle_name=_author.middle_name,
+                                                  last_name=_author.last_name)
+        if obj:
+            obj.authors.add(author)
+        # добавляем переводчиков
+    for _translator in book.translators:
+        translator, cr = Translator.objects.get_or_create(first_name=_translator.first_name,
+                                                          middle_name=_translator.middle_name,
+                                                          last_name=_translator.last_name)
+        if obj:
+            obj.translator.add(translator)
+        # Создаем серии
+    for b_sequence in book.sequences:
+        if b_sequence.name:
+            sequence, cr = Sequence.objects.get_or_create(name=b_sequence.name)
+            book_seq, cr = SequenceBook.objects.get_or_create(book=obj, sequence=sequence, number=b_sequence.number)
 
 if __name__ == "__main__":
     main()
