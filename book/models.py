@@ -81,7 +81,7 @@ class Translator(Author):
 class SequenceBook(models.Model):
     """ Расшивка серия-книга"""
     book = models.ForeignKey('Book', verbose_name=u'Книга', null=True, blank=True)
-    number = models.FloatField(u'Номер в серии', null=True, blank=True)
+    number = models.CharField(u'Номер в серии', null=True, blank=True, max_length=10)
     sequence = models.ForeignKey('Sequence', verbose_name=u'Жанр', null=True, blank=True)
 
     class Meta:

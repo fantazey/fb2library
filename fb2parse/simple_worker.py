@@ -8,6 +8,7 @@ import django
 os.environ["DJANGO_SETTINGS_MODULE"] = "fb2lib.settings"
 django.setup()
 from book.models import Book, Sequence, SequenceBook, Genre, Translator, Author, Language, Publisher
+from datetime import datetime
 
 # Модуль в одном потоке бежит по файловой системе, читает файлы, перекладывает их в другое место
 # сразу же добавляет в базу, упаковывает их
@@ -71,8 +72,10 @@ def move_book(book_file):
 
 
 def main():
+
     for (_dir, sub_dir, files_here) in os.walk(SOURCE):
         for _file in files_here:
+            start = datetime.now()
             # собираем file-object книгу
             _file_path = os.path.join(_dir, _file)
             book_file = BookFile(_file_path)
@@ -81,15 +84,15 @@ def main():
             if not res:
                 # если не получилось - пропускаем
                 continue
-            res = True
             # перемещаем книгу
-            #res = move_book(book_file)
+            res = move_book(book_file)
             if not res:
                 continue
             res = save_cover(book_file)
             if not res:
                 continue
             save_book(book_file)
+            print datetime.now() - start
 
 
 def save_cover(book_file):
@@ -122,26 +125,15 @@ def save_book(book_file):
             md5=book_file.hash
         )
         if book_file.book.cover is not None:
-            obj.image = os.path.join(book_file.hash[:4], book_file.hash)
+            obj.image = os.path.join(book_file.hash[:4], book_file.hash + book_file.book.cover.extension)
         obj.save()
     else:
         obj = Book.objects.get(md5=book_file.hash)
 
-    if book.lang is not None:
-        if not Language.objects.filter(code=book.lang).exists():
-            book_lang = Language.objects.create(code=book.lang)
-        else:
-            book_lang = Language.objects.get(code=book.lang)
-    else:
-        book_lang = Language.objects.get_or_create(code="UNKNOWN")
-
-    if book.src_lang is not None:
-        if not Language.objects.filter(code=book.src_lang).exists():
-            book_src_lang = Language.objects.create(code=book.src_lang)
-        else:
-            book_src_lang = Language.objects.get(code=book.src_lang)
-    else:
-        book_src_lang = Language.objects.get_or_create(code="UNKNOWN")
+    _lang = book.lang if book.lang is not None else "UNKNOWN"
+    book_lang, cr = Language.objects.get_or_create(code=_lang)
+    _src_lang = book.src_lang if book.src_lang is not None else "UNKNOWN"
+    book_src_lang, cr = Language.objects.get_or_create(code=_src_lang)
 
     if obj:
         obj.lang = book_lang
