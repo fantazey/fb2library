@@ -3,7 +3,11 @@ import os
 from fb2parse import BookFile
 from binascii import Error as base64PaddingError
 from shutil import move as shumove
-from book.models import *
+
+import django
+os.environ["DJANGO_SETTINGS_MODULE"] = "fb2lib.settings"
+django.setup()
+from book.models import Book, Sequence, SequenceBook, Genre, Translator, Author, Language, Publisher
 
 # Модуль в одном потоке бежит по файловой системе, читает файлы, перекладывает их в другое место
 # сразу же добавляет в базу, упаковывает их
@@ -17,6 +21,9 @@ __author__ = 'Andrew'
 SOURCE = "d:\\Projects\\proj\\_fb2from\\"
 LIBRARY = "d:\\Projects\\proj\\_fb2to\\Root\\Library\\"
 COVERS = "d:\\Projects\\proj\\_fb2to\\Root\\Covers\\"
+from fb2lib.private_settings import SRC_BOOK_PATH, COVERS, LIBRARY_PATH
+SOURCE = SRC_BOOK_PATH
+LIBRARY = LIBRARY_PATH
 
 
 def get_path_elements(path):
@@ -77,7 +84,8 @@ def main():
             if not res:
                 continue
             # перемещаем книгу
-            res = move_book(book_file)
+            #res = move_book(book_file)
+            res = True
             if not res:
                 continue
             save_book(book_file)
@@ -99,8 +107,6 @@ def save_book(book_file):
     """
     book_file instance ob BookFile
     """
-    # debug
-    book_file = BookFile('_')
     book = book_file.book
     # Добавляем книгу
     if not Book.objects.filter(md5=book_file.hash).exists():
@@ -115,7 +121,7 @@ def save_book(book_file):
             obj.image = os.path.join(book_file.hash[:4], book_file.hash)
         obj.save()
     else:
-        obj = None
+        obj = Book.objects.get(md5=book_file.hash)
     if not Language.objects.filter(code=book.lang).exists():
         book_lang = Language.objects.create(code=book.lang)
     else:
@@ -133,7 +139,7 @@ def save_book(book_file):
     # Создаем жанры прочитанные в книге
     for b_genre in b_genres:
         genre, cr = Genre.objects.get_or_create(code=b_genre.code, name=b_genre.name)
-        if book:
+        if obj:
             obj.genre.add(genre)
         # Создаем авторов
 

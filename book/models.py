@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from opds.models import Char
+#from opds.models import Char
 
 
 class Language(models.Model):

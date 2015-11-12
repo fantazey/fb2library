@@ -3,3 +3,4 @@ fb2lib/private_settings.py
 test_books/*
 test_lib/*
 test_covers/*
+.idea/*

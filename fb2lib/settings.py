@@ -10,19 +10,29 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'library',
-        'USER': 'django',
-        'PASSWORD': '1',
-        'HOST': '192.168.56.101',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '5439',  # Set to empty string for default.
+LOCAL = True
+if LOCAL:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'library',
+            'USER': 'mit',
+            'PASSWORD': 'test',
+            'HOST': '127.0.0.1',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+            'PORT': '5432',  # Set to empty string for default.
+        }
     }
-}
-
-from private_settings import DATABASES
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'library',
+            'USER': 'django',
+            'PASSWORD': '1',
+            'HOST': '192.168.56.101',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+            'PORT': '5439',  # Set to empty string for default.
+        }
+    }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
