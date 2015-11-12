@@ -18,9 +18,7 @@ __author__ = 'Andrew'
 # todo: 5 добавение в базу
 # todo: 6 упаковка
 
-SOURCE = "d:\\Projects\\proj\\_fb2from\\"
-LIBRARY = "d:\\Projects\\proj\\_fb2to\\Root\\Library\\"
-COVERS = "d:\\Projects\\proj\\_fb2to\\Root\\Covers\\"
+
 from fb2lib.private_settings import SRC_BOOK_PATH, COVERS, LIBRARY_PATH
 SOURCE = SRC_BOOK_PATH
 LIBRARY = LIBRARY_PATH
@@ -80,28 +78,34 @@ def main():
             book_file = BookFile(_file_path)
             # собираем class-object книгу
             res = book_file.make_book()
-            # если не получилось - пропускаем
             if not res:
+                # если не получилось - пропускаем
                 continue
+            res = True
             # перемещаем книгу
             #res = move_book(book_file)
-            res = True
+            if not res:
+                continue
+            res = save_cover(book_file)
             if not res:
                 continue
             save_book(book_file)
-            # пока картинки не сохраняем
-            if book_file.book.cover is not None:
-                covername = book_file.hash
-                coverpath = os.path.join(COVERS, covername[:4])
-                if not os.path.exists(coverpath):
-                    os.mkdir(coverpath)
-                with open(os.path.join(coverpath, covername + '.' + book_file.book.cover.extension), 'wb') as coverfile:
-                    try:
-                        coverfile.write(book_file.book.cover.data.decode('base64'))
-                    except base64PaddingError:
-                        # todo: fix padding
-                        continue
 
+
+def save_cover(book_file):
+    if book_file.book.cover is not None:
+        covername = book_file.hash
+        coverpath = os.path.join(COVERS, covername[:4])
+        if not os.path.exists(coverpath):
+            os.mkdir(coverpath)
+        with open(os.path.join(coverpath, covername + '.' + book_file.book.cover.extension), 'wb') as coverfile:
+            try:
+                coverfile.write(book_file.book.cover.data.decode('base64'))
+                return True
+            except base64PaddingError:
+                # todo: fix padding
+                return False
+    return False
 
 def save_book(book_file):
     """
@@ -122,41 +126,55 @@ def save_book(book_file):
         obj.save()
     else:
         obj = Book.objects.get(md5=book_file.hash)
-    if not Language.objects.filter(code=book.lang).exists():
-        book_lang = Language.objects.create(code=book.lang)
+
+    if book.lang is not None:
+        if not Language.objects.filter(code=book.lang).exists():
+            book_lang = Language.objects.create(code=book.lang)
+        else:
+            book_lang = Language.objects.get(code=book.lang)
     else:
-        book_lang = Language.objects.get(code=book.lang)
-    if not Language.objects.filter(code=book.src_lang).exists():
-        book_src_lang = Language.objects.create(code=book.src_lang)
+        book_lang = Language.objects.get_or_create(code="UNKNOWN")
+
+    if book.src_lang is not None:
+        if not Language.objects.filter(code=book.src_lang).exists():
+            book_src_lang = Language.objects.create(code=book.src_lang)
+        else:
+            book_src_lang = Language.objects.get(code=book.src_lang)
     else:
-        book_src_lang = Language.objects.get(code=book.src_lang)
+        book_src_lang = Language.objects.get_or_create(code="UNKNOWN")
+
     if obj:
         obj.lang = book_lang
         obj.src_lang = book_src_lang
         obj.save()
 
-    b_genres = book.genres
     # Создаем жанры прочитанные в книге
-    for b_genre in b_genres:
-        genre, cr = Genre.objects.get_or_create(code=b_genre.code, name=b_genre.name)
+    for b_genre in book.genres:
+        if b_genre.code is not None:
+            genre, cr = Genre.objects.get_or_create(code=b_genre.code, name=b_genre.name)
+        else:
+            genre, cr = Genre.objects.get_or_create(code='UNKNOWN')
+
         if obj:
             obj.genre.add(genre)
-        # Создаем авторов
 
+    # Создаем авторов
     for _author in book.authors:
         author, cr = Author.objects.get_or_create(first_name=_author.first_name,
                                                   middle_name=_author.middle_name,
                                                   last_name=_author.last_name)
         if obj:
             obj.authors.add(author)
-        # добавляем переводчиков
+
+    # добавляем переводчиков
     for _translator in book.translators:
         translator, cr = Translator.objects.get_or_create(first_name=_translator.first_name,
                                                           middle_name=_translator.middle_name,
                                                           last_name=_translator.last_name)
         if obj:
             obj.translator.add(translator)
-        # Создаем серии
+    # Создаем серии
+
     for b_sequence in book.sequences:
         if b_sequence.name:
             sequence, cr = Sequence.objects.get_or_create(name=b_sequence.name)

@@ -239,7 +239,7 @@ class Genre(object):
         if code in genres_types.keys():
             self.name = genres_types[code]
         else:
-            self.name = 'UNKNOWN'
+            self.name = None
 
     def __repr__(self):
         if self.name is not None:
@@ -270,9 +270,9 @@ class Book(CommonTag):
         # дата
         self.date = None
         # язык
-        self.lang = 'UNKNOWN'
+        self.lang = None
         # исходных язык
-        self.src_lang = 'UNKNOWN'
+        self.src_lang = None
         # обложка хранится base64 строкой
         self.cover = None
         # список авторов
@@ -361,7 +361,7 @@ class Book(CommonTag):
         :return: True если не было ошибок при разборе
         """
         for genre in self.title_info.findAll('genre'):
-            if genre.string:
+            if genre.string and len(genre.string.strip()) > 0:
                 self.genres.append(Genre(genre.string.strip()))
 
     def get_sequences(self, node):
@@ -413,11 +413,7 @@ class Book(CommonTag):
         self.title = self.get_tag_text('book-title', self.title_info)
         self.date = self.get_tag_text('date', self.title_info)
         self.lang = self.get_tag_text('lang', self.title_info)
-        if self.lang is None:
-            self.lang = 'UNKNOWN'
         self.src_lang = self.get_tag_text('src-lang', self.title_info)
-        if self.src_lang is None:
-            self.src_lang = 'UNKNOWN'
         # Аннтотация
         if self.title_info.annotation and self.title_info.annotation.contents:
             self.annotation = self.title_info.annotation.__str__()
