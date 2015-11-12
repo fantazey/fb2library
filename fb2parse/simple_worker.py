@@ -80,6 +80,7 @@ def main():
             res = move_book(book_file)
             if not res:
                 continue
+            save_book(book_file)
             # пока картинки не сохраняем
             if book_file.book.cover is not None:
                 covername = book_file.hash
@@ -93,7 +94,9 @@ def main():
                         # todo: fix padding
                         continue
 
-            # res = save_cover(book_file)
+
+def save_book(book_file):
+    pass
 
 if __name__ == "__main__":
     main()
