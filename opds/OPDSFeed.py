@@ -4,6 +4,7 @@ from django.utils.feedgenerator import Atom1Feed, SyndicationFeed, rfc3339_date,
 from datetime import datetime
 NAV_LINK_TYPE = "application/atom+xml;profile=opds-catalog;kind=navigation"
 
+# Модуль для реализации классов OPDS Feed на основе Django Syndication Framework
 
 class NavigationOPDS(Atom1Feed):
     mime_type = 'application/atom+xml; charset=utf-8'

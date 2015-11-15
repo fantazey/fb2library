@@ -231,7 +231,6 @@ class TestMainFeed(Feed):
         return item.get_absolute_url()
 
 
-
 class TestAutorsFeed(Feed):
     title = "test"
     link = "link"
