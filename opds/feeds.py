@@ -1,20 +1,22 @@
 # -*- coding: utf-8 -*-
 __author__ = 'andrew'
-
+from django.utils.feedgenerator import Atom1Feed
 from django.contrib.syndication.views import Feed
 from django.shortcuts import get_object_or_404
+from django.core.urlresolvers import reverse
 from opds.models import *
 from book.models import *
-from book.OPDSFeed import OPDS
+from book.OPDSFeed import NavigationOPDS, AcquisitionOPDS
 
 
 class OPDSFeed(Feed):
-    feed_type = OPDS
+    feed_type = NavigationOPDS
     mime_type = 'application/xml'
 
 
 class MainMenuFeed(OPDSFeed):
     """ Главное меню """
+    feed_type = Atom1Feed
     title = "Main menu"
     alt_link = "/opds"
     link = "/opds"
@@ -206,3 +208,106 @@ class BookByAuthorFeed(OPDSFeed):
           'foz': obj.some_method(),
           'baz': obj.some_attribute,
         }
+
+
+class TestMainFeed(Feed):
+    title = "test"
+    link = "link"
+    alt_link = "/opds"
+    alt_link_type="self"
+    feed_type = NavigationOPDS
+    description = "test main feed"
+
+    def items(self):
+        return MenuItem.objects.filter(group='0').order_by('order')
+
+    def item_title(self, item):
+        return item.title
+
+    def item_description(self, item):
+        return item.description
+
+    def item_link(self, item):
+        return item.get_absolute_url()
+
+
+
+class TestAutorsFeed(Feed):
+    title = "test"
+    link = "link"
+    alt_link = "/opds/authors/"
+    alt_link_type="self"
+    feed_type = NavigationOPDS
+    description = "test main feed"
+
+    def items(self):
+        return Char.objects.all().order_by('char')
+
+    def item_title(self, item):
+        return u"Авторы на %s" % item.char
+
+    def item_description(self, item):
+        return u"Авторы на %s" % item.char
+
+    def item_link(self, item):
+        return item.get_absolute_url()
+
+
+class TestAutorsCharFeed(Feed):
+    title = "test"
+    link = "link"
+    alt_link = "/opds/authors/"
+    alt_link_type="self"
+    feed_type = NavigationOPDS
+    description = "test main feed"
+
+    def get_object(self, request, char_id):
+       return Char.objects.get(id=char_id)
+
+    def items(self, obj):
+        return Author.objects.filter(last_name__startswith=obj.char)
+
+    def item_title(self, item):
+        return item.__unicode__()
+
+    def item_description(self, item):
+        return item.__unicode__()
+
+    def item_link(self, item):
+        return item.get_absolute_url_opds()
+
+
+class TestAuthorFeed(Feed):
+    title = "test"
+    link = "link"
+    alt_link = "/opds/authors/"
+    alt_link_type="self"
+    feed_type = AcquisitionOPDS
+    description = "test main feed"
+
+    def get_object(self, request, author_id):
+        return Author.objects.get(id=author_id)
+
+    def items(self, obj):
+        return Book.objects.filter(authors=obj).order_by('title')
+
+    def item_title(self, item):
+        return item.title
+
+    def item_extra_kwargs(self, item):
+        res = {}
+        if item.genre.all().exists():
+            genre = item.genre.all()[0]
+            res['category_label'] = genre.name
+            res['category_term'] = genre.code
+        res['abs_link'] = item.get_absolute_url()
+        res['cover_link'] = item.get_cover_url()
+        res['cover_thumb_link'] = item.get_cover_url()
+        res['download_link'] = item.get_download_url()
+        return res
+
+    def item_description(self, item):
+        return item.title
+
+    def item_link(self, item):
+        return item.get_absolute_url_opds()

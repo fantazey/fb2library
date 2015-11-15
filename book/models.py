@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 #from opds.models import Char
-
+from fb2lib.settings import FILE_SERVER, IMAGE_SERVER
 
 class Language(models.Model):
     """ Язык книги """
@@ -69,6 +69,9 @@ class Author(models.Model):
     def __unicode__(self):
         return self.last_name + ' ' + self.first_name
 
+    def get_absolute_url_opds(self):
+        return "/opds/author/%d/" % self.id
+
 
 class Translator(Author):
     """ Переводчик """
@@ -134,3 +137,14 @@ class Book(models.Model):
     def __unicode__(self):
         return self.title
 
+    def get_absolute_url_opds(self):
+        return "/opds/book/%d/" % self.id
+
+    def get_absolute_url(self):
+        return "/book/%d/" % self.id
+
+    def get_cover_url(self):
+        return self.image.url
+
+    def get_download_url(self):
+        return FILE_SERVER + '/' + self.book_file.replace("\\", "/")
