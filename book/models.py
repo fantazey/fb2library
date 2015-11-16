@@ -168,7 +168,7 @@ class Book(models.Model):
         return "/book/%d/" % self.id
 
     def get_cover_url(self):
-        return self.image.url
+        return IMAGE_SERVER + '/' + self.image.url[:-3] + "." + self.image.url[-3:]
 
     def get_download_url(self):
         return FILE_SERVER + '/' + self.book_file.replace("\\", "/")

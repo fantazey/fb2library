@@ -169,6 +169,6 @@ LOGGING = {
         },
     }
 }
-IMAGE_SERVER = "http://images.fantazey.ru"
-
-FILE_SERVER = "http://192.168.1.11/files"
+#IMAGE_SERVER = "http://images.fantazey.ru"
+IMAGE_SERVER = "http://192.168.1.11:83"
+FILE_SERVER = "http://192.168.1.11:82"
