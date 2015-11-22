@@ -50,7 +50,7 @@
                                     <a href="book/details/{{ book.id }}/" title="{{ book.title|safe }}">
                                         <span class="cover cover-book">
                                             {% if book.image %}
-                                                <img height="185" alt="{{ book.title }}" src="{{ book.image.url|rebase_url }}" class="cover-image" itemprop="image">
+                                                <img height="185" alt="{{ book.title }}" src="{{ book.image.get_image|rebase_url }}" class="cover-image" itemprop="image">
                                             {% else %}
                                                 <img height="185" alt="{{ book.title }}" src="{{ ''|rebase_url:'empty' }}" class="cover-image" itemprop="image">
                                             {% endif %}
