@@ -24,7 +24,7 @@ def get_menu_data():
 def index(request):
     """ Главная страница """
     letters, genres = get_menu_data()
-    last_books = Book.objects.all().order_by('id')[:20]
+    last_books = Book.objects.all().order_by('-id')[:20]
     return render_to_response(
         'main/index.html',
         {

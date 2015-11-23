@@ -101,7 +101,11 @@ def save_cover(book_file):
         coverpath = os.path.join(COVERS, covername[:4])
         if not os.path.exists(coverpath):
             os.mkdir(coverpath)
-        with open(os.path.join(coverpath, covername + '.' + book_file.book.cover.extension), 'wb') as coverfile:
+        with open(os.path.join(coverpath,
+                               covername +
+                               '.' +
+                               book_file.book.cover.extension),
+                  'wb') as coverfile:
             try:
                 coverfile.write(book_file.book.cover.data.decode('base64'))
                 return True
@@ -109,6 +113,7 @@ def save_cover(book_file):
                 # todo: fix padding
                 return False
     return False
+
 
 def save_book(book_file):
     """
@@ -124,11 +129,15 @@ def save_book(book_file):
             book_file=book_file.new_path,
             md5=book_file.hash
         )
-        if book_file.book.cover is not None:
-            obj.image = os.path.join(book_file.hash[:4], book_file.hash + book_file.book.cover.extension)
-        obj.save()
     else:
         obj = Book.objects.get(md5=book_file.hash)
+
+    if book_file.book.cover is not None:
+        obj.image = os.path.join(book_file.hash[:4],
+                                 book_file.hash + '.' +
+                                 book_file.book.cover.extension
+                                 )
+        obj.save()
 
     _lang = book.lang if book.lang is not None else "UNKNOWN"
     book_lang, cr = Language.objects.get_or_create(code=_lang)
@@ -143,7 +152,8 @@ def save_book(book_file):
     # Создаем жанры прочитанные в книге
     for b_genre in book.genres:
         if b_genre.code is not None:
-            genre, cr = Genre.objects.get_or_create(code=b_genre.code, name=b_genre.name)
+            genre, cr = Genre.objects.get_or_create(code=b_genre.code,
+                                                    name=b_genre.name)
         else:
             genre, cr = Genre.objects.get_or_create(code='UNKNOWN')
 
@@ -152,17 +162,21 @@ def save_book(book_file):
 
     # Создаем авторов
     for _author in book.authors:
-        author, cr = Author.objects.get_or_create(first_name=_author.first_name,
-                                                  middle_name=_author.middle_name,
-                                                  last_name=_author.last_name)
+        author, cr = Author.objects.get_or_create(
+            first_name=_author.first_name,
+            middle_name=_author.middle_name,
+            last_name=_author.last_name
+        )
         if obj:
             obj.authors.add(author)
 
     # добавляем переводчиков
     for _translator in book.translators:
-        translator, cr = Translator.objects.get_or_create(first_name=_translator.first_name,
-                                                          middle_name=_translator.middle_name,
-                                                          last_name=_translator.last_name)
+        translator, cr = Translator.objects.get_or_create(
+            first_name=_translator.first_name,
+            middle_name=_translator.middle_name,
+            last_name=_translator.last_name
+        )
         if obj:
             obj.translator.add(translator)
     # Создаем серии
@@ -170,7 +184,11 @@ def save_book(book_file):
     for b_sequence in book.sequences:
         if b_sequence.name:
             sequence, cr = Sequence.objects.get_or_create(name=b_sequence.name)
-            book_seq, cr = SequenceBook.objects.get_or_create(book=obj, sequence=sequence, number=b_sequence.number)
+            book_seq, cr = SequenceBook.objects.get_or_create(
+                book=obj,
+                sequence=sequence,
+                number=b_sequence.number
+            )
 
 if __name__ == "__main__":
     main()

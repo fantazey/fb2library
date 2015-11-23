@@ -6,18 +6,26 @@ from django.db.models import Q
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from book.models import *
 from main.views import get_menu_data
+from battaries.decorators import render_to
+
 
 def library(request):
     return render_to_response('main/__index.html', {}, context_instance=RequestContext(request))
 
-def book_details(request, id):
+
+@render_to("book/book_details.html")
+def book_details(request, book_id):
     """
     Подробнее о книге
     """
-    book = Book.objects.get(id=id)
+    book = Book.objects.get(id=book_id)
     sequences = []
     genres = Genre.objects.filter(name__isnull=False).order_by('name')
-    genres = [{'id': genre.id, 'name': genre.name, 'count': genre.book_set.count()} for genre in genres]
+    genres = [
+        {'id': genre.id,
+         'name': genre.name,
+         'count': genre.book_set.count()} for genre in genres
+    ]
     for sequence in book.sequence.all():
         sequences.append({
             'name': sequence.name,
@@ -25,15 +33,12 @@ def book_details(request, id):
             'id': sequence.id,
         })
     letters, genres = get_menu_data()
-    return render_to_response(
-        'book/book_details.html',
-        {
+    return {
             'book': book,
             'sequences': sequences,
             'genres': genres,
             'letters': letters
-        },
-        context_instance=RequestContext(request))
+    }
 
 def author_letter(request, letter):
     """
