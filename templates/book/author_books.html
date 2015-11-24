@@ -1,0 +1,60 @@
+{% extends "main/index.html" %}
+{% load rebase_url %}
+{% block content-title %}
+    {{ title }}
+{% endblock %}
+{% block content %}
+<div class='book-content'>
+    {% for book in books %}
+        <div class="card-wrapper">
+            <div class="card-cover">
+                <a href="book/details/{{ book.id }}/" title="{{ book.title|safe }}">
+                    {% if book.image %}
+                        <img height="185" alt="{{ book.title }}" src="{{ book.get_cover_url }}" class="cover-image" itemprop="image">
+                    {% endif %}
+                </a>
+            </div>
+            <div class="author">
+                {% with book.authors.all|first as author %}
+                    <a href="/book/author/{{ author.id }}/books/">
+                        {{ author|safe }}
+                    </a>
+                {% endwith %}
+            </div>
+            <div class="title">
+                <a href="book/details/{{ book.id }}" title="{{ book.title|safe }}">
+                    {{ book.title|safe }}
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="navigation">
+        <div class="n_arrow">
+            {% if books.has_previous %}
+                &larr;&nbsp;
+                <a href="?page={{ books.previous_page_number }}">
+                    предыдущая
+                </a> |
+            {% endif %}
+            {%  if books.has_next %}
+                <a href="?page={{ books.next_page_number }}">
+                    следующая
+                </a>
+                &nbsp;&rarr;
+            {% endif %}
+        </div>
+        <div class="clr"></div>
+        <div class="n_pages">
+            {% for page in books.paginator.page_range %}
+                {% if page == books.number %}
+                    <span>{{ page }}</span>
+                {% else %}
+                    <a href="?page={{ page }}">
+                       {{ page }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

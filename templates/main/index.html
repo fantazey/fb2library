@@ -41,17 +41,16 @@
             <div class="main-container">
                 <div class="left-menu">
                     <ul class="m-menu">
-                        {% for genre in genres %}
-                            {% if genre.name %}
-                                <li><a href="/book/genre/{{ genre.id }}/books">{{ genre.name }}</a> {{ genre.count }}</li>
-                            {% endif %}
-                        {% endfor %}
+                        <li class="menu-item">{% block nav-home %}<strong>Главная</strong>{% endblock %}</li>
+                        <li class="menu-item">{% block nav-authors %}<a href="{% url 'letters' %}">Поиск автора</a>{% endblock %}</li>
+                        <li class="menu-item">{% block nav-genres %}<a href="{% url 'genres' %}">Жанры</a>{% endblock %}</li>
+                        <li class="menu-item">{% block nav-sequences %}<a href="{% url 'sequences' %}">Серии</a>{% endblock %}</li>
                     </ul>
                 </div>
                 <div class="container">
                     <div class="content-title">
                         {% block content-title %}
-                            <span>Книги в формате fb2 бесплатно</span>
+                            <span>Последние добавленные книги</span>
                         {% endblock %}
                     </div>
                     <div class="content">

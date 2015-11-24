@@ -74,7 +74,7 @@ div.header {
 }
 .left-menu > .m-menu {
     color: #d5d5d5;
-    font-size: 13px;
+    font-size: 16px;
     margin: 0px;
     padding: 0px;
 }
@@ -84,6 +84,8 @@ div.header {
     border: 1px solid #333333;
     color: black;
     background: linear-gradient(to bottom, #a5dd89, #2eda2e);
+    height: 50px;
+    width: 150px;
 }
 .m-menu li a {
     color: #000000;
@@ -125,10 +127,7 @@ div.header {
     justify-content: flex-start;
     align-items: stretch;
     text-align: center;
-    border: 1px solid #fff9d9;
-}
-.card-wrapper > .card-cover{
-
+    border: 2px solid #fff9d9;
 }
 .card-wrapper > .author a {
     color: #888;
@@ -140,7 +139,37 @@ div.header {
     color: #000;
     text-decoration: none;
 }
-
+.char-content {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+.char.card-wrapper{
+    margin: 10px;
+}
+.char.card-wrapper .letter {
+    font-size: 40px;
+    border: 2px solid burlywood;
+    padding: 40px;
+}
+.authors-content {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.author.card-wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+.book-content{
+    display: flex;
+    flex-flow: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
 .footer {
     background-color: #ffffcc;
     text-align: center;

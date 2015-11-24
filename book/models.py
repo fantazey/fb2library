@@ -81,6 +81,9 @@ class Author(models.Model):
     def get_absolute_url_opds(self):
         return "/opds/author/%d/" % self.id
 
+    def get_absolute_url(self):
+        return "/book/author/%d/" % self.id
+
 
 class Translator(Author):
     """ Переводчик """
@@ -115,7 +118,7 @@ class Book(models.Model):
     genre = models.ManyToManyField(Genre, verbose_name=u'Жанры', null=True)
     annotation = models.TextField(u'Описание', null=True, blank=True)
     authors = models.ManyToManyField(Author, verbose_name=u'Авторы',
-                                     related_name='authors')
+                                     related_name='books')
     lang = models.ForeignKey(Language, verbose_name=u'Язык', null=True,
                              related_name=u'book_lang')
     src_lang = models.ForeignKey(Language, verbose_name=u'Язык оригинала',
@@ -178,3 +181,6 @@ class Book(models.Model):
         return ", ".join([
             "%s %s" % (author.last_name, author.first_name)
             for author in authors])
+
+
+
