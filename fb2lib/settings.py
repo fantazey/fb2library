@@ -11,7 +11,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-from private_settings import DATABASES
+from private_settings import DATABASES, COVERS, LIBRARY_PATH,\
+    SRC_BOOK_PATH, SITE_ID
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -26,8 +27,6 @@ TIME_ZONE = 'Asia/Novosibirsk'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'ru-ru'
-
-SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
