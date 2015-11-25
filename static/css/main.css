@@ -147,6 +147,13 @@ div.header {
 .char.card-wrapper{
     margin: 10px;
 }
+.genre.card-wrapper {
+    width: 200px;
+    font-size: 20px;
+    border: 2px solid burlywood;
+    margin: 20px;
+    padding: 20px;
+}
 .char.card-wrapper .letter {
     font-size: 40px;
     border: 2px solid burlywood;
@@ -170,11 +177,56 @@ div.header {
     justify-content: flex-start;
     align-items: flex-start;
 }
+.book-list-container{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.book-list-container > .card-wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 150px;
+    margin: 0px 10px 10px 10px;
+    border: 2px solid burlywood;
+    border-radius: 5px;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+}
 .navigation {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-around;
 }
+.book-card {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.book-description {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-left: 20px;
+}
+.book-title h1{
+    margin: 0;
+}
+.book-genres, .book-sequences,
+.book-annotation, .book-authors a{
+    font-size: 15px;
+}
+.book-genres > span,
+.book-sequences > span,
+.book-annotation > span,
+.book-authors > span {
+    font-weight: bold;
+    font-size: 14px;
+}
+
 .footer {
     background-color: #ffffcc;
     text-align: center;

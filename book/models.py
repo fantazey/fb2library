@@ -48,6 +48,9 @@ class Genre(models.Model):
     def get_absolute_url_opds(self):
         return "/opds/genre/%d" % self.id
 
+    def get_absolute_url(self):
+        return "/book/genre/%d" % self.id
+
 
 class Sequence(models.Model):
     """ Серии """
@@ -115,7 +118,8 @@ class SequenceBook(models.Model):
 class Book(models.Model):
     """ Книга """
     title = models.CharField(u'Название', max_length=300)
-    genre = models.ManyToManyField(Genre, verbose_name=u'Жанры', null=True)
+    genre = models.ManyToManyField(Genre, verbose_name=u'Жанры', null=True,
+                                   related_name='books')
     annotation = models.TextField(u'Описание', null=True, blank=True)
     authors = models.ManyToManyField(Author, verbose_name=u'Авторы',
                                      related_name='books')

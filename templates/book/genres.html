@@ -1,0 +1,25 @@
+{% extends "main/index.html" %}
+{% block nav-home %}<a href="{% url 'index' %}">Главная</a>{% endblock %}
+{% block nav-authors %}<strong>Поиск автора</strong>{% endblock %}
+{% block nav-genres %}<a href="{% url 'genres' %}">Жанры</a>{% endblock %}
+{% block nav-sequences %}<a href="{% url 'sequences' %}">Серии</a>{% endblock %}
+{% block content-title %}
+    {{ title }}
+{% endblock %}
+{% block content %}
+<div class='char-content'>
+    {% for genre in genres %}
+        <div class="genre card-wrapper">
+            <a href="{{ genre.get_absolute_url }}">
+                <div class="genre">
+                    {% if genre.name %}
+                        {{ genre.name }}
+                    {% else %}
+                        {{ genre.code }}
+                    {% endif %}
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

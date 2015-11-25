@@ -27,17 +27,10 @@ def letters(request):
 
 @render_to("book/genres.html")
 def genres(request):
-    genre_list = Genre.objects.all().order_by('name')
-    paginator = Paginator(genre_list, 10)
-    page = request.GET.get("page", 1)
-    try:
-        _genres = paginator.page(page)
-    except EmptyPage:
-        _genres = paginator.page(paginator.num_pages)
-    except PageNotAnInteger:
-        _genres = paginator.page(1)
+    title = u"Список жанров представленных в библиотеке"
     return {
-        'genres': _genres
+        'genres': Genre.objects.all().order_by('name'),
+        'title': title
     }
 
 
@@ -84,39 +77,25 @@ def author_letter(request, letter):
     }
 
 
-
 @render_to("book/book_details.html")
 def book_details(request, book_id):
     """
     Подробнее о книге
     """
+    title = u"Книга"
     book = Book.objects.get(id=book_id)
-    sequences = []
-    genres = Genre.objects.filter(name__isnull=False).order_by('name')
-    genres = [
-        {'id': genre.id,
-         'name': genre.name,
-         'count': genre.book_set.count()} for genre in genres
-    ]
-    for sequence in book.sequence.all():
-        sequences.append({
-            'name': sequence.name,
-            'number': SequenceBook.objects.get(book=book,sequence=sequence).number ,
-            'id': sequence.id,
-        })
-    letters, genres = get_menu_data()
     return {
             'book': book,
-            'sequences': sequences,
-            'genres': genres,
-            'letters': letters
+            'title': title
     }
 
-def genre_books(request, id):
+
+@render_to('book/author_books.html')
+def genre_books(request, genre_id):
     """
     Книги жанра
     """
-    all_books = Book.objects.filter(genre__id=id).order_by('title')
+    all_books = Book.objects.filter(genre__id=genre_id).order_by('title')
     paginator = Paginator(all_books, 50)
     page = request.GET.get("page", 1)
     try:
@@ -125,15 +104,11 @@ def genre_books(request, id):
         books = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         books = paginator.page(1)
-    letters, genres = get_menu_data()
-    return render_to_response(
-        'book/author_books.html',
-        {
-            'books': books,
-            'genres': genres,
-            'letters': letters
-        },
-        context_instance=RequestContext(request))
+    return {
+        'books': books,
+        'genres': genres,
+        'letters': letters
+    }
 
 
 @render_to("book/author_books.html")
