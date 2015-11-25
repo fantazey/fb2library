@@ -12,7 +12,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 from private_settings import DATABASES, COVERS, LIBRARY_PATH,\
-    SRC_BOOK_PATH, SITE_ID
+    SRC_BOOK_PATH, SITE_ID, IMAGE_SERVER, FILE_SERVER
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -146,6 +146,4 @@ LOGGING = {
         },
     }
 }
-#IMAGE_SERVER = "http://images.fantazey.ru"
-IMAGE_SERVER = "http://192.168.1.11:83"
-FILE_SERVER = "http://192.168.1.11:82"
+
