@@ -58,7 +58,7 @@
                         {% for book in last_books %}
                             <div class="card-wrapper">
                                 <div class="card-cover">
-                                    <a href="book/details/{{ book.id }}/" title="{{ book.title|safe }}">
+                                    <a href="{{ book.get_absolute_url }}" title="{{ book.title|safe }}">
                                         {% if book.image %}
                                             <img height="185" alt="{{ book.title }}" src="{{ book.get_cover_url }}" class="cover-image" itemprop="image">
                                         {% endif %}
@@ -66,13 +66,13 @@
                                 </div>
                                 <div class="author">
                                     {% with book.authors.all|first as author %}
-                                        <a href="/book/author/{{ author.id }}/books/">
+                                        <a href="{{ author.get_absolute_url }}">
                                             {{ author|safe }}
                                         </a>
                                     {% endwith %}
                                 </div>
                                 <div class="title">
-                                    <a href="book/details/{{ book.id }}" title="{{ book.title|safe }}">
+                                    <a href="{{ book.get_absolute_url }}" title="{{ book.title|safe }}">
                                         {{ book.title|safe }}
                                     </a>
                                 </div>

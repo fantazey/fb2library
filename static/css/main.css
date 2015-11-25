@@ -166,9 +166,14 @@ div.header {
 }
 .book-content{
     display: flex;
-    flex-flow: row;
+    flex-flow: column wrap;
     justify-content: flex-start;
     align-items: flex-start;
+}
+.navigation {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
 }
 .footer {
     background-color: #ffffcc;
