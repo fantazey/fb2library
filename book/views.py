@@ -7,21 +7,31 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from book.models import *
 from main.views import get_menu_data
 
-def library(request):
-    return render_to_response('main/__index.html', {}, context_instance=RequestContext(request))
 
-def book_details(request, id):
-    """
-    Подробнее о книге
-    """
-    book = Book.objects.get(id=id)
+def library(request):
+    return render_to_response(
+        'main/__index.html',
+        {},
+        context_instance=RequestContext(request)
+    )
+
+
+def book_details(request, _id):
+    book = Book.objects.get(id=_id)
     sequences = []
     genres = Genre.objects.filter(name__isnull=False).order_by('name')
-    genres = [{'id': genre.id, 'name': genre.name, 'count': genre.book_set.count()} for genre in genres]
+    genres_info = []
+    for genre in genres:
+        genres_info.append({
+            'id': genre.id,
+            'name': genre.name,
+            'count': genre.book_set.count()
+        })
     for sequence in book.sequence.all():
         sequences.append({
             'name': sequence.name,
-            'number': SequenceBook.objects.get(book=book,sequence=sequence).number ,
+            'number': SequenceBook.objects.get(book=book,
+                                               sequence=sequence).number,
             'id': sequence.id,
         })
     letters, genres = get_menu_data()
@@ -35,13 +45,14 @@ def book_details(request, id):
         },
         context_instance=RequestContext(request))
 
+
 def author_letter(request, letter):
-    """
-    Авторы с фамилией на букву letter
-    """
     if len(letter) != 1:
         raise Http404
-    all_authors = Author.objects.filter(Q(last_name__startswith=letter.upper()) | Q(last_name__startswith=letter.lower()))
+    all_authors = Author.objects.filter(
+        Q(last_name__startswith=letter.upper()) |
+        Q(last_name__startswith=letter.lower())
+    )
     all_authors = all_authors.order_by('last_name')
     paginator = Paginator(all_authors, 60)
     page = request.GET.get("page", 1)
@@ -61,11 +72,9 @@ def author_letter(request, letter):
         },
         context_instance=RequestContext(request))
 
-def genre_books(request, id):
-    """
-    Книги жанра
-    """
-    all_books = Book.objects.filter(genre__id=id).order_by('title')
+
+def genre_books(request, _id):
+    all_books = Book.objects.filter(genre__id=_id).order_by('title')
     paginator = Paginator(all_books, 50)
     page = request.GET.get("page", 1)
     try:
@@ -84,11 +93,12 @@ def genre_books(request, id):
         },
         context_instance=RequestContext(request))
 
-def author_books(request, id):
+
+def author_books(request, _id):
     """
     Книги автора
     """
-    all_books = Author.objects.get(id=id).book_set.all().order_by('title')
+    all_books = Author.objects.get(id=_id).book_set.all().order_by('title')
     paginator = Paginator(all_books, 50)
     page = request.GET.get("page", 1)
     try:

@@ -5,15 +5,13 @@ from os import path
 
 
 class Logger:
-    """Класс для логгирования действий
-    """
     def __init__(self, wid, folder):
         """
-        :param wid: id логгера для формирования имени файла
-        :param folder: папка в которую складывать лог
+        :param wid: logger id for filename
+        :param folder: folder for saving logs
         :return:
         """
-        self.logfile = path.join(folder, 'log '+str(wid)+'.txt')
+        self.logfile = path.join(folder, 'log ' + str(wid) + '.txt')
 
     def info(self, *args):
         self.log("INF", *args)

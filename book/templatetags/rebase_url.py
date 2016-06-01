@@ -5,7 +5,7 @@ register = template.Library()
 
 
 def rebase_url(value, empty=False):
-    """Removes all values of arg from the given string"""
+    """ Tag for display book covers """
     if not empty:
         return settings.IMAGE_SERVER + value
     else:

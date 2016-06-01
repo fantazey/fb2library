@@ -5,42 +5,41 @@ from fb2lib.settings import FILE_SERVER, IMAGE_SERVER
 
 
 class Language(models.Model):
-    """ Язык книги """
-    code = models.CharField(u'Код языка', max_length=50, null=False)
-    name = models.CharField(u'Название', max_length=100, null=True)
+    """ Book language """
+    code = models.CharField(u'Language code', max_length=50, null=False)
+    name = models.CharField(u'Name', max_length=100, null=True)
 
     class Meta:
-        verbose_name = u'Язык'
-        verbose_name_plural = u'Языки'
+        verbose_name = u'Language'
+        verbose_name_plural = u'Languages'
 
     def __unicode__(self):
         return '%s (%s)' % (self.name, self.code)
 
 
 class Publisher(models.Model):
-    """ Издатель """
-    name = models.CharField(u'Название издательства', max_length=150)
-    city = models.CharField(u'Город', max_length=100, null=True, blank=True)
-    website = models.URLField(u'Адрес сайта', null=True, blank=True)
-    year = models.CharField(u'Год', max_length=20, null=True, blank=True)
+    """ Book publisher """
+    name = models.CharField(u'Name', max_length=150)
+    city = models.CharField(u'City', max_length=100, null=True, blank=True)
+    website = models.URLField(u'Web-Site', null=True, blank=True)
+    year = models.CharField(u'Year', max_length=20, null=True, blank=True)
 
     class Meta:
-        verbose_name = u'Издатель'
-        verbose_name_plural = u'Издатели'
+        verbose_name = u'Publisher'
+        verbose_name_plural = u'Publishers'
 
     def __unicode__(self):
         return self.name
 
 
 class Genre(models.Model):
-    """ Жанр книги """
-    code = models.CharField(u'Код жанра', max_length=50)
-    name = models.CharField(u'Название жанра', max_length=300, null=True,
-                            blank=True)
+    """ Book genre """
+    code = models.CharField(u'Genre code', max_length=50)
+    name = models.CharField(u'Name', max_length=300, null=True, blank=True)
 
     class Meta:
-        verbose_name = u'Жанр'
-        verbose_name_plural = u'Жанры'
+        verbose_name = u'Genre'
+        verbose_name_plural = u'Genres'
 
     def __unicode__(self):
         return self.name
@@ -50,12 +49,12 @@ class Genre(models.Model):
 
 
 class Sequence(models.Model):
-    """ Серии """
-    name = models.CharField(u'Название серии', max_length=300)
+    """ Sequence """
+    name = models.CharField(u'Name', max_length=300)
 
     class Meta:
-        verbose_name = u'Серия'
-        verbose_name_plural = u'Серии'
+        verbose_name = u'Sequence'
+        verbose_name_plural = u'Sequences'
 
     def __unicode__(self):
         return self.name
@@ -65,15 +64,15 @@ class Sequence(models.Model):
 
 
 class Author(models.Model):
-    """ Автор """
-    first_name = models.CharField(u'Имя', max_length=200, default='000')
-    middle_name = models.CharField(u'Отчество', max_length=200, null=True,
+    """ Author """
+    first_name = models.CharField(u'First name', max_length=200, default='000')
+    middle_name = models.CharField(u'Middle name', max_length=200, null=True,
                                    blank=True)
-    last_name = models.CharField(u'Фамилия', max_length=200, default='000')
+    last_name = models.CharField(u'Last name', max_length=200, default='000')
 
     class Meta:
-        verbose_name = u'Автор'
-        verbose_name_plural = u'Авторы'
+        verbose_name = u'Author'
+        verbose_name_plural = u'Authors'
 
     def __unicode__(self):
         return self.last_name + ' ' + self.first_name
@@ -83,25 +82,25 @@ class Author(models.Model):
 
 
 class Translator(Author):
-    """ Переводчик """
+    """ Translator """
 
     class Meta:
-        verbose_name = u'Переводчик'
-        verbose_name_plural = u'Переводчики'
+        verbose_name = u'Translator'
+        verbose_name_plural = u'Translators'
 
 
 class SequenceBook(models.Model):
-    """ Расшивка серия-книга"""
-    book = models.ForeignKey('Book', verbose_name=u'Книга', null=True,
+    """ Book from sequence """
+    book = models.ForeignKey('Book', verbose_name=u'Book', null=True,
                              blank=True)
-    number = models.CharField(u'Номер в серии', null=True, blank=True,
+    number = models.CharField(u'Number in sequence', null=True, blank=True,
                               max_length=10)
-    sequence = models.ForeignKey('Sequence', verbose_name=u'Жанр', null=True,
-                                 blank=True)
+    sequence = models.ForeignKey('Sequence', verbose_name=u'Sequence',
+                                 null=True, blank=True)
 
     class Meta:
-        verbose_name = u'Серия книги'
-        verbose_name_plural = u'Серии книг'
+        verbose_name = u'Book sequence'
+        verbose_name_plural = u'Books sequence'
 
     def __unicode__(self):
         return "%s - %s (%s)" % (self.book.title,
@@ -111,31 +110,31 @@ class SequenceBook(models.Model):
 
 class Book(models.Model):
     """ Книга """
-    title = models.CharField(u'Название', max_length=300)
-    genre = models.ManyToManyField(Genre, verbose_name=u'Жанры', null=True)
-    annotation = models.TextField(u'Описание', null=True, blank=True)
-    authors = models.ManyToManyField(Author, verbose_name=u'Авторы',
+    title = models.CharField(u'Title', max_length=300)
+    genre = models.ManyToManyField(Genre, verbose_name=u'Genres', null=True)
+    annotation = models.TextField(u'Annotation', null=True, blank=True)
+    authors = models.ManyToManyField(Author, verbose_name=u'Authors',
                                      related_name='authors')
-    lang = models.ForeignKey(Language, verbose_name=u'Язык', null=True,
+    lang = models.ForeignKey(Language, verbose_name=u'Language', null=True,
                              related_name=u'book_lang')
-    src_lang = models.ForeignKey(Language, verbose_name=u'Язык оригинала',
+    src_lang = models.ForeignKey(Language, verbose_name=u'Original language',
                                  null=True, related_name=u'book_src_lang')
-    date = models.CharField(u'Дата', max_length=50, null=True, blank=True)
-    sequence = models.ManyToManyField('Sequence', verbose_name=u'Серии книги',
+    date = models.CharField(u'Date', max_length=50, null=True, blank=True)
+    sequence = models.ManyToManyField('Sequence', verbose_name=u'Sequences',
                                       null=True, through='SequenceBook')
-    book_file = models.CharField(u'Файл', max_length=1000)
-    image = models.ImageField(u'Обложка', upload_to='covers/', null=True,
+    book_file = models.CharField(u'File', max_length=1000)
+    image = models.ImageField(u'Cover', upload_to='covers/', null=True,
                               blank=True, max_length=300)
     md5 = models.CharField(u'Hash', max_length=150, default='000')
-    publisher = models.ManyToManyField(Publisher, verbose_name=u'Издатель',
+    publisher = models.ManyToManyField(Publisher, verbose_name=u'Publisher',
                                        null=True)
     translator = models.ManyToManyField(Translator, related_name='translators',
-                                        verbose_name=u'Переводчик', null=True)
+                                        verbose_name=u'Translator', null=True)
     uuid = models.CharField(u"UUID", max_length=30, null=True, blank=True)
 
     class Meta:
-        verbose_name = u'Книга'
-        verbose_name_plural = u'Книги'
+        verbose_name = u'Book'
+        verbose_name_plural = u'Books'
 
     def add_sequences(self, sequence_list):
         for _seq, num in sequence_list:
@@ -168,7 +167,7 @@ class Book(models.Model):
         return "/book/%d/" % self.id
 
     def get_cover_url(self):
-        return IMAGE_SERVER + '/' + self.image.url[:-3] + "." + self.image.url[-3:]
+        return IMAGE_SERVER + '/' + self.image.url
 
     def get_download_url(self):
         return FILE_SERVER + '/' + self.book_file.replace("\\", "/")

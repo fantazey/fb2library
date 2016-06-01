@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Loading known book genres to DataBase
 
 from book.models import Genre
 

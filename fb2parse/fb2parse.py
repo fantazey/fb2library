@@ -6,42 +6,37 @@ from hashlib import md5
 
 __author__ = 'Andrew'
 
-#    Модуль позволяющий парсить fb2 книги в объекты классов представленных
-#    в модуле
-#    http://www.fictionbook.org/index.php/%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5_%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B0_FB2_%D0%BE%D1%82_Sclex
-#
-
 
 class CommonTag(object):
     """
-    Примесь
-    Общие методы работы с обьектами Tag
+    Mixin
+    Common functions for operating with Tag objects
     """
     @staticmethod
     def get_node_attrs(node):
         """
-        Вытаскивает аттрибуты ноды как нормальный словарь, а не как понос
-        :param node: экземпляр класса Tag, аттибуты которого хотим знать
-        :return: словарь с аттрибутами
+        Read node attributes as a dict, not like bullshit
+        :param node: object Tag
+        :return: dict with attributes
         """
         return {x[0]: x[1] for x in node.attrs}
 
     def node_has_attr_like(self, node, like):
         """
-        Проверка наличия у ноды атрибута с именем похожим на like
-        :param node:  нода, аттрибуты которой проверяем
-        :param like: строка, которую ищем в названии аттрибута
-        :return: True если есть аттрибут с похожим названием, False иначе
+        Check is attribute with name exists
+        :param node:  object Tag
+        :param like: string for search
+        :return: True if exist
         """
         attrs = self.get_node_attrs(node)
         return any([x.find(like) >= 0 for x in attrs.keys()])
 
     def get_node_attr_like(self, node, like):
         """
-        Выполняет поиск и возвращает имя атрибута похожего на like
-        :param node: нода в которой идет поиск аттрибута
-        :param like: строка, которая ищется в названии аттрибута
-        :return: название аттрибута в результате поиска
+        Searching for attribute name which looks like "like"
+        :param node: object Tag
+        :param like: string for search
+        :return: name of attribute
         """
         attrs = self.get_node_attrs(node)
         attr = None

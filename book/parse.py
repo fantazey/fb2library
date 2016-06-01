@@ -6,25 +6,29 @@ from Queue import Queue
 
 from fb2parse import worker
 
-# Начало библиотеки. Все будет складываться сюда.
-#PROJECT_ROOT = '/home/andrew/projects/_fb2to'
-#SOURCE = '/home/andrew/projects/_fb2from'
+# Dest folder. Here we create library tree
 PROJECT_ROOT = 'D:\\Projects\\proj\\_fb2to'
+# Source folder. Here we read books
 SOURCE = 'D:\\Projects\\proj\\_fb2from'
+
 LOG = os.path.join(PROJECT_ROOT, "log.txt")
-# Лог функции запуска
+
 LOG_TEST = os.path.join(PROJECT_ROOT, "log_main.txt")
 
 
 def report_test(*args):
-    """ Логгирование действий и событий
-    :param args: набор строк для вывода
+    """ Log all actions
+    :param args: Strings for log. The first one define class(INF|DBG|ERR)
     :return:
     """
     with open(LOG_TEST, 'a') as log:
         _class = args[0]
         data = " ".join('%s' % a for a in args[1:])
-        log.write("%s [%s] %s\n" % (_class, datetime.now().strftime('%y-%m-%d %H:%M:%S'), data))
+        log.write("%s [%s] %s\n" % (
+            _class,
+            datetime.now().strftime('%y-%m-%d %H:%M:%S'),
+            data
+        ))
 
 
 def multiple():
@@ -39,13 +43,13 @@ def multiple():
         _loaders.append(_loader)
     return _readers, _loaders
 
+
+# Script for testing threaded reading
 if __name__ == "__main__":
-    # очередь файлов
     worker.make_project_dirs()
     report_test("INF", "Make directories")
     report_test("INF", "Directories created")
     files_queue = Queue(1000)
-    # очередь с книгами
     book_queue = Queue(1000)
     report_test("INF", "Start walker")
     walker = worker.Walker(SOURCE, files_queue)
