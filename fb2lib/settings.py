@@ -10,29 +10,7 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-# LOCAL = True
-# if LOCAL:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#             'NAME': 'library',
-#             'USER': 'mit',
-#             'PASSWORD': 'test',
-#             'HOST': '127.0.0.1',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-#             'PORT': '5432',  # Set to empty string for default.
-#         }
-#     }
-# else:
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'library',
-#         'USER': 'django',
-#         'PASSWORD': '1',
-#         'HOST': '192.168.56.101',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-#         'PORT': '5439',  # Set to empty string for default.
-#     }
-# }
+
 from private_settings import DATABASES
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -169,6 +147,3 @@ LOGGING = {
         },
     }
 }
-#IMAGE_SERVER = "http://images.fantazey.ru"
-IMAGE_SERVER = "http://192.168.1.11:83"
-FILE_SERVER = "http://192.168.1.11:82"
