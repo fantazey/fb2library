@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
-__author__ = 'Andrew'
+
+import os
+from BeautifulSoup import BeautifulStoneSoup
+
+VERSION = '0.0.1'
 # Old implementation for FB2 parser
+# IT"S TOOOOO OLD. Unused. Unsupported.
 # http://www.fictionbook.org/index.php/%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5_\
 # %D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B0_FB2_%D0%BE%D1%82_Sclex
-# Версия 1
-import os
-from datetime import datetime
-from BeautifulSoup import BeautifulStoneSoup
 
 # TODO: 1 Перехват исключений
 # TODO: 2 Обложки сохраняются битыми
-LOG = '/home/andrew/projects/_fb2to/log.txt'
+LOG = ''
 
 
 class FBook:

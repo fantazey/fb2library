@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-__author__ = 'andy'
 
 from django.core.management.base import NoArgsCommand
 from book.models import Author

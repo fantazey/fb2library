@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-__author__ = 'andrew'
+
+from django.contrib.syndication.views import Feed
+from opds.models import *
+from opds.OPDSFeed import *
+from book.models import *
+
+
 __all__ = ['MainFeed',
            'AuthorsCharsFeed', 'AuthorsFeed', 'AuthorBooksFeed',
            'GenresFeed', 'GenreBooksFeed',
            'SequencesFeed', 'SequenceBooksFeed',
            'BookFeed']
-
-from django.contrib.syndication.views import Feed
-
-from opds.models import *
-from opds.OPDSFeed import *
-from book.models import *
 
 # Classes for implementing work with OPDS (RSS books catalog)
 

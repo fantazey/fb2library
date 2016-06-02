@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-__author__ = 'Andrew'
-
 
 from django.core.management.base import NoArgsCommand
 from opds.models import Char

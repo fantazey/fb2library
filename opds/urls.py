@@ -1,9 +1,11 @@
-__author__ = 'Andrew'
+# -*- coding: utf-8 -*-
 
 from django.conf.urls import patterns, url
 from opds.feeds import *
 
-urlpatterns = patterns('/opds',
+
+urlpatterns = patterns(
+    '/opds',
     url(r'^main/$', MainFeed()),
     url(r'^authors/$', AuthorsCharsFeed()),
     url(r'^authors/(?P<char_id>\d+)/$', AuthorsFeed()),

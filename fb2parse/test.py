@@ -6,7 +6,7 @@ import os
 
 def main():
     path = "D:\\Projects\\proj\\_fb2bak"
-    id = '225713'  #raw_input("book id:")
+    id = '225713'  # raw_input("book id:")
     bookfile = BookFile(os.path.join(path, id + '.fb2'))
     book = bookfile.make_book()
     print book

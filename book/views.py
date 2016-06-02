@@ -3,9 +3,8 @@ from django.shortcuts import render_to_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template import RequestContext
 from django.db.models import Q
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import Http404
 from book.models import *
-from main.views import get_menu_data
 from opds.models import Char
 from battaries.decorators import render_to
 
@@ -16,6 +15,7 @@ def library(request):
         {},
         context_instance=RequestContext(request)
     )
+
 
 @render_to("book/letters.html")
 def letters(request):
@@ -89,8 +89,8 @@ def book_details(request, book_id):
     title = u"Книга"
     book = Book.objects.get(id=book_id)
     return {
-            'book': book,
-            'title': title
+        'book': book,
+        'title': title
     }
 
 

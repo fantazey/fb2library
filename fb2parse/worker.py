@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-__author__ = 'Andrew'
 
 import os
 import shutil
@@ -7,7 +6,6 @@ from threading import Thread
 from time import sleep
 import hashlib
 from base64 import b64decode
-
 import django
 os.environ["DJANGO_SETTINGS_MODULE"] = "fb2lib.settings"
 django.setup()
@@ -15,6 +13,7 @@ from book.models import *
 from book.logger import Logger
 from fb2 import FBook
 from parse import PROJECT_ROOT
+
 
 # Логи потоков
 LOG_FOLDER = os.path.join(PROJECT_ROOT, "Logs")
@@ -55,7 +54,8 @@ class Walker(Thread):
 
     def run(self):
         """
-         Двигаться по каталогу. Если архив - отдали работнику. Если книга - добавили в очередь
+         Двигаться по каталогу. Если архив - отдали работнику.
+         Если книга - добавили в очередь
         """
         for (_dir, sub_dir, files_here) in os.walk(self.source):
             for _file in files_here:
@@ -74,9 +74,10 @@ class Walker(Thread):
 class Worker(Thread):
     """
     Рабочий. Выполняет обработку книг. Сохранение их в нужном месте
-    Рабочий с типом 1  перебирает файлы из очереди, если находит fb2 то пытается обработать его,
-    чтобы получить FBook объект.
-    Рабочий с типом 2 должен загружать информацию о найденных книгах в базу данных.
+    Рабочий с типом 1  перебирает файлы из очереди,
+    если находит fb2 то пытается обработать его, чтобы получить FBook объект.
+    Рабочий с типом 2 должен загружать информацию о найденных книгах в
+    базу данных.
     Рабочий с типом 3 должен тоже чтото делать, но у него пока перекур.
     """
     READER_TYPE = 1
@@ -89,7 +90,12 @@ class Worker(Thread):
         self.file_queue = file_queue
         self.type = _type
         self.logger = Logger(wid, LOG_FOLDER)
-        self.logger.info(u"Logger initialized. Worker id:", str(wid), u". Type:", self.type)
+        self.logger.info(
+            u"Logger initialized. Worker id:",
+            str(wid),
+            u". Type:",
+            self.type
+        )
         self.eq_counter = 0
         # штука с которой работать - имя файла, или уже объект FBook
         self.item = None
@@ -107,7 +113,6 @@ class Worker(Thread):
 
     def reader_work(self):
         """ Основная задача Worker """
-        # Если очередь файлов пустая или в очереди обработанных книг больше n штук, ждем
         if self.file_queue.empty():
             self.logger.debug(u"Empty queue. Waiting")
             self.eq_counter += 1
@@ -163,7 +168,12 @@ class Worker(Thread):
             self.add2db()
         except Exception, e:
             print e.message
-            self.logger.error(u"Load book: ", self.item.title_info['book-title'], u"\nException:", e.message)
+            self.logger.error(
+                u"Load book: ",
+                self.item.title_info['book-title'],
+                u"\nException:",
+                e.message
+            )
 
     def parse_book(self):
         book = FBook(self.item, level=0, logger=self.logger)
@@ -183,7 +193,12 @@ class Worker(Thread):
                     self.logger.error(u"Book %s not valid" % self.item)
             else:
                 # книга с ошибками
-                self.logger.error(u"Book %s has error: %s" % (self.item, book.error_description))
+                self.logger.error(
+                    u"Book %s has error: %s" % (
+                        self.item,
+                        book.error_description
+                    )
+                )
         # не удалось распарсить
         else:
             self.logger.error(u"File %s has errors" % self.item)
@@ -197,11 +212,17 @@ class Worker(Thread):
         # Сохраняем изорбажение в каталоге +
         self.save_img()
         if move == 0:
-            self.logger.info(u"File moved successfully. Removing original file: ", self.item.filename)
+            self.logger.info(
+                u"File moved successfully. Removing original file: ",
+                self.item.filename
+            )
             try:
                 os.unlink(self.item.filename)
             except Exception, e:
-                self.logger.error(u"Error on removing original file.", e.message)
+                self.logger.error(
+                    u"Error on removing original file.",
+                    e.message
+                )
         pass
 
     @staticmethod
@@ -243,7 +264,12 @@ class Worker(Thread):
                 self.logger.debug(u"Book has duplicate.")
                 res = self.move_duplicate(self.item)
             else:
-                self.logger.info(u"Save book to %s" % os.path.join(LIBRARY, self.item.book_file_path))
+                self.logger.info(
+                    u"Save book to %s" % os.path.join(
+                        LIBRARY,
+                        self.item.book_file_path
+                    )
+                )
                 file_path = os.path.join(LIBRARY, self.item.book_file_path)
                 _file = open(file_path, 'w')
                 _file.write(self.item.soup.prettify())
@@ -265,7 +291,11 @@ class Worker(Thread):
             _file.close()
             return 0
         except Exception, e:
-            self.logger.error(u"Move duplicate book", item.book_file_name, e.message)
+            self.logger.error(
+                u"Move duplicate book",
+                item.book_file_name,
+                e.message
+            )
             self.move_bad_file()
             return -1
 
@@ -273,12 +303,14 @@ class Worker(Thread):
         if 'data' not in self.item.title_info['coverpage']:
             return 0
         img_name = hashlib.md5(self.item.book).hexdigest()
-        # первые 4 символа имени определяют каталог, в которм будет храниться обложка
+        # first 4 chars of img_name define dir for cover
         start_path = os.path.join(COVERS, img_name[:4])
         if not os.path.exists(start_path):
             os.mkdir(start_path)
         try:
-            file_name = img_name + '.' + self.item.title_info['coverpage']['ext']
+            file_name = img_name + '.' + \
+                self.item.title_info['coverpage']['ext']
+
             file_name = os.path.join(start_path, file_name)
             data = self.item.title_info['coverpage']['data']
             try:
@@ -294,7 +326,12 @@ class Worker(Thread):
                     _img_file.write(b64data)
                 self.item.cover_path = file_name
         except Exception, e:
-            self.logger.error(u"Book file: ", self.item.title_info['book-title'], u" Exception: ", e.message)
+            self.logger.error(
+                u"Book file: ",
+                self.item.title_info['book-title'],
+                u" Exception: ",
+                e.message
+            )
 
     def add2db(self):
         """
@@ -316,9 +353,15 @@ class Worker(Thread):
                 book.save()
         else:
             book = None
-        _lang = self.item.title_info['lang'] if 'lang' in self.item.title_info.keys() else u'unknown'
-        _src_lang = self.item.title_info['src-lang'] if 'src-lang' in self.item.title_info.keys() else u'unknown'
-        self.logger.debug(u"Create lang objects for: %s %s" % (_lang, _src_lang))
+        _lang = u'unknown'
+        _src_lang = u'unknown'
+        if 'lang' in self.item.title_info.keys():
+            _lang = self.item.title_info['lang']
+        if 'src_lang' in self.item.title_info.keys():
+            _src_lang = self.item.title_info['src-lang']
+        self.logger.debug(
+            u"Create lang objects for: %s %s" % (_lang, _src_lang)
+        )
         if not Language.objects.filter(code=_lang).exists():
             book_lang = Language.objects.create(code=_lang)
         else:
@@ -341,32 +384,54 @@ class Worker(Thread):
                 book.genre.add(genre)
         # Создаем авторов
         for a_tuple in self.item.title_info['authors']:
-            self.logger.debug(u"Create author:", a_tuple[0], a_tuple[1], a_tuple[2])
-            author, cr = Author.objects.get_or_create(first_name=a_tuple[0],
-                                                      middle_name=a_tuple[1],
-                                                      last_name=a_tuple[2])
+            self.logger.debug(
+                u"Create author:",
+                a_tuple[0],
+                a_tuple[1],
+                a_tuple[2]
+            )
+            author, cr = Author.objects.get_or_create(
+                first_name=a_tuple[0],
+                middle_name=a_tuple[1],
+                last_name=a_tuple[2]
+            )
             if book:
                 book.authors.add(author)
         # добавляем переводчиков
         translators = self.item.title_info['translator']
         for t_tuple in translators:
-            self.logger.debug(u"Create translator:", t_tuple[0], t_tuple[1], t_tuple[2])
-            translator, cr = Translator.objects.get_or_create(first_name=t_tuple[0],
-                                                              middle_name=t_tuple[1],
-                                                              last_name=t_tuple[2])
+            self.logger.debug(
+                u"Create translator:",
+                t_tuple[0],
+                t_tuple[1],
+                t_tuple[2]
+            )
+            translator, cr = Translator.objects.get_or_create(
+                first_name=t_tuple[0],
+                middle_name=t_tuple[1],
+                last_name=t_tuple[2]
+            )
             if book:
                 book.translator.add(translator)
         # Создаем серии
         for b_sequence in self.item.title_info['sequence']:
             if 'name' in b_sequence:
                 self.logger.debug(u"Create sequence: %s" % b_sequence['name'])
-                sequence, cr = Sequence.objects.get_or_create(name=b_sequence['name'])
+                sequence, cr = Sequence.objects.get_or_create(
+                    name=b_sequence['name']
+                )
                 if 'number' in b_sequence:
-                    self.logger.debug(u"Book has number in sequence: %s" % b_sequence['number'])
+                    self.logger.debug(
+                        u"Book has # in sequence: %s" % b_sequence['number']
+                    )
                     _seq_num = b_sequence['number']
                 else:
                     _seq_num = None
-                book_seq, cr = SequenceBook.objects.get_or_create(book=book, sequence=sequence, number=_seq_num)
+                SequenceBook.objects.get_or_create(
+                    book=book,
+                    sequence=sequence,
+                    number=_seq_num
+                )
 
     def move_broken_book(self, params):
         """ Убрать битую книгу """
@@ -393,7 +458,7 @@ class Worker(Thread):
         """ Распаковать ахрив """
         if self.item:
             pass
-        # todo: проверить работоспособность
+        # todo: check commented code
         # arch = ZipFile(self.item, 'r')
         # arch_name = os.path.split(self.item)[-1]
         # name = " ".join(arch_name.split('.')[:-1])

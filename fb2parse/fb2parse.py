@@ -4,8 +4,6 @@ from BeautifulSoup import BeautifulStoneSoup
 from genres import genres_types
 from hashlib import md5
 
-__author__ = 'Andrew'
-
 
 class CommonTag(object):
     """
@@ -52,22 +50,18 @@ class BookFile(CommonTag):
         на блоки, и создание необходимых классов
     """
     def __init__(self, path=None):
-        # содержимое файла
         self.xml = ""
-        # путь к файлу
         self.file = path
         # объект BeautifulStoneSoup и разобраная книга
         self.soup = self.book = None
-        # новый путь для сохранения
         self.new_path = ""
-        # новое имя файла
         self.new_name = ""
-        # md5 hash от текста книги
         self.hash = ""
 
     def get_encoding(self):
         """Получить кодировку"""
-        # пока это тупой поиск кодировки, так как BSS не всегда адекватно читает
+        # пока это тупой поиск кодировки,
+        # так как BSS не всегда адекватно читает
         # её из файла и пытается угадывать что попало
         # пока проверяются только две кодировки
         # todo: future исправить на что-либо умное
@@ -146,13 +140,17 @@ class BookFile(CommonTag):
         return True
 
     def get_new_name_path(self):
-        """Получить путь к файлу построенный на фамилии автора и названии книги"""
+        """
+        Получить путь к файлу построенный
+        на фамилии автора и названии книги
+        """
         stops = ',:><|?*/\n\\"'
         title = self.book.title
         if any([char in title for char in stops]):
             title = reduce(lambda res, y: res.replace(y, '-'), stops, title)
         author = self.book.authors[0]
-        name = author.last_name + ' ' + author.first_name + " - " + title + ".fb2"
+        name = author.last_name + ' ' + author.first_name + " - " + \
+            title + ".fb2"
         author_dir = author.last_name + ' ' + author.first_name
         lang = self.book.lang if self.book.lang is not None else '#'
         if len(author.last_name) > 0:
@@ -178,19 +176,14 @@ class Author(object):
     """ Класс автора.Автор """
 
     def __init__(self, first="", last="", middle=""):
-        # имя
         self.first_name = first
-        # фамилия
         self.last_name = last
-        # отчество
         self.middle_name = middle
 
     def __repr__(self):
-        return u"".join([
+        return u"-".join([
             self.last_name,
-            u"-",
             self.first_name,
-            u"-",
             self.middle_name
         ]).encode('utf-8')
 
@@ -363,7 +356,8 @@ class Book(CommonTag):
         """
         Серии могут быть в различных секциях описания книги
         Поэтому метод вынесен отдельно.
-        :param node: родительская нода, в которой ведем поиск информации о серии
+        :param node: родительская нода,
+        в которой ведем поиск информации о серии
         :return: список объектов Sequence, которые были найдены в node
         """
         sequences = node.findAll('sequence')

@@ -133,6 +133,6 @@ genres = [
 
 for genre in genres:
     code, name = genre.split(';')
-    gen, ce = Genre.objects.get_or_create(code=code,name=name)
+    gen, ce = Genre.objects.get_or_create(code=code, name=name)
     if ce:
         print 'Genre %s created' % gen.name

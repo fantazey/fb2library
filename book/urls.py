@@ -1,10 +1,9 @@
-__author__ = 'Andrew'
-
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns,  url
 from views import *
 
-urlpatterns = patterns('/book',
-    #url(r'^$', 'book.views.library', name='recent'),
+urlpatterns = patterns(
+    '/book',
+    # url(r'^$', 'book.views.library', name='recent'),
     url(r'letters/', letters, name="letters"),
     url(r'genres/', genres, name="genres"),
     url(r'sequences/', sequences, name="sequences"),

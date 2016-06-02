@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__author__ = 'Andrew'
+
 from datetime import datetime
 from os import path
 
@@ -45,5 +45,9 @@ class Logger:
                         _data += unicode(sub_str)
                     except Exception, e:
                         pass
-            data_str = u"%s [%s] %s\n" % (_class, datetime.now().strftime('%y-%m-%d %H:%M:%S'), _data)
+            data_str = u"%s [%s] %s\n" % (
+                _class,
+                datetime.now().strftime('%y-%m-%d %H:%M:%S'),
+                _data
+            )
             log.write(data_str.encode("utf-8"))

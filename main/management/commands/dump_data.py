@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-__author__ = 'Andrew'
 
 from django.core.management.base import NoArgsCommand
-from book.models import *
-from opds.models import *
 from django.contrib.sites.models import Site
 from django.core import serializers
+from book.models import *
+from opds.models import *
 
 
 class Command(NoArgsCommand):
@@ -19,7 +18,7 @@ class Command(NoArgsCommand):
         _models = [
             (Author, 'authors'), (Book, 'book'), (Sequence, 'sequence'),
             (SequenceBook, 'sequencebook'), (Genre, 'genre'),
-            (Language, 'language'), (Translator,'translator'), (Char, 'char'),
+            (Language, 'language'), (Translator, 'translator'), (Char, 'char'),
             (MenuItem, 'menuitem'), (Publisher, 'publisher'), (Site, 'site')
         ]
 

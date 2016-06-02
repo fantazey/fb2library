@@ -1,5 +1,3 @@
-__author__ = 'Andrew'
-
 # Django settings for fb2library project.
 
 DEBUG = True

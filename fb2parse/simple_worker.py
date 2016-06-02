@@ -3,24 +3,25 @@ import os
 from fb2parse import BookFile
 from binascii import Error as base64PaddingError
 from shutil import move as shumove
-
+from datetime import datetime
 import django
 os.environ["DJANGO_SETTINGS_MODULE"] = "fb2lib.settings"
 django.setup()
-from book.models import Book, Sequence, SequenceBook, Genre, Translator, Author, Language, Publisher
-from datetime import datetime
+from fb2lib.private_settings import SRC_BOOK_PATH, COVERS, LIBRARY_PATH
+from book.models import Book, Sequence, SequenceBook, Genre, Translator, \
+    Author, Language, Publisher
 
-# Модуль в одном потоке бежит по файловой системе, читает файлы, перекладывает их в другое место
+
+# Модуль в одном потоке бежит по файловой системе,
+# читает файлы, перекладывает их в другое место
 # сразу же добавляет в базу, упаковывает их
 
-__author__ = 'Andrew'
 
 # todo: 4 проверка дубликатов
 # todo: 5 добавение в базу
 # todo: 6 упаковка
 
 
-from fb2lib.private_settings import SRC_BOOK_PATH, COVERS, LIBRARY_PATH
 SOURCE = SRC_BOOK_PATH
 LIBRARY = LIBRARY_PATH
 
@@ -72,7 +73,6 @@ def move_book(book_file):
 
 
 def main():
-
     for (_dir, sub_dir, files_here) in os.walk(SOURCE):
         for _file in files_here:
             start = datetime.now()
@@ -101,11 +101,11 @@ def save_cover(book_file):
         coverpath = os.path.join(COVERS, covername[:4])
         if not os.path.exists(coverpath):
             os.mkdir(coverpath)
-        with open(os.path.join(coverpath,
-                               covername +
-                               '.' +
-                               book_file.book.cover.extension),
-                  'wb') as coverfile:
+        _path = os.path.join(
+            coverpath,
+            covername + '.' + book_file.book.cover.extension
+        )
+        with open(_path, 'wb') as coverfile:
             try:
                 coverfile.write(book_file.book.cover.data.decode('base64'))
                 return True
@@ -184,7 +184,7 @@ def save_book(book_file):
     for b_sequence in book.sequences:
         if b_sequence.name:
             sequence, cr = Sequence.objects.get_or_create(name=b_sequence.name)
-            book_seq, cr = SequenceBook.objects.get_or_create(
+            SequenceBook.objects.get_or_create(
                 book=obj,
                 sequence=sequence,
                 number=b_sequence.number

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-__author__ = 'andrew'
-__all__ = ['NaviFeed', 'BookFeed']
 
 from django.utils.feedgenerator import Atom1Feed, rfc3339_date, get_tag_uri
 from datetime import datetime
+
+
+__all__ = ['NaviFeed', 'BookFeed']
 
 # Inheritance of Django Syndication Framework
 # Classes for implementing OPDS
@@ -119,7 +120,8 @@ class BookFeed(NaviFeed):
             {
                 "label": item['category_label'],
                 "term": item['category_term'],
-                "scheme": "http://www.fictionbook.org/index.php/%D0%96%D0%B0%D0%BD%D1%80%D1%8B_FictionBook_2.1/"
+                "scheme": "http://www.fictionbook.org/index.php/" +
+                          "%D0%96%D0%B0%D0%BD%D1%80%D1%8B_FictionBook_2.1/"
             }
         )
         handler.addQuickElement(

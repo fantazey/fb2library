@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from django.db import models
 
 
@@ -28,4 +29,4 @@ class MenuItem(models.Model):
         return '/opds/%s/' % self.link
 
     def __unicode__(self):
-        return '/opds/%s - %s' % (self.link,self.title)
+        return '/opds/%s - %s' % (self.link, self.title)

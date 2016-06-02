@@ -1,6 +1,11 @@
 import os
 # Django settings for fb2library project.
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        '..'
+    )
+)
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

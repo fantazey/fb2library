@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-
 from fb2lib.settings import FILE_SERVER, IMAGE_SERVER
 
 
@@ -150,9 +149,8 @@ class Book(models.Model):
             except (ValueError, TypeError), e:
                 print e
                 num = None
-            if not num and not SequenceBook.objects.filter(book=self,
-                                                           sequence=_seq,
-                                                           number=num).exists():
+            sequences = SequenceBook.objects.filter(book=self, sequence=_seq)
+            if not num and not sequences.filter(number=num).exists():
                 SequenceBook.objects.create(
                     book=self,
                     sequence=_seq,
@@ -184,6 +182,3 @@ class Book(models.Model):
         return ", ".join([
             "%s %s" % (author.last_name, author.first_name)
             for author in authors])
-
-
-
