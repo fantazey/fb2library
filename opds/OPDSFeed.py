@@ -4,7 +4,9 @@ __all__ = ['NaviFeed', 'BookFeed']
 
 from django.utils.feedgenerator import Atom1Feed, rfc3339_date, get_tag_uri
 from datetime import datetime
-# Модуль для реализации классов OPDS Feed на основе Django Syndication Framework
+
+# Inheritance of Django Syndication Framework
+# Classes for implementing OPDS
 
 
 class NaviFeed(Atom1Feed):

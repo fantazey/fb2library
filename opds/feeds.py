@@ -12,13 +12,15 @@ from opds.models import *
 from opds.OPDSFeed import *
 from book.models import *
 
+# Classes for implementing work with OPDS (RSS books catalog)
+
 
 class MainFeed(Feed):
-    """ Главное меню OPDS """
-    title = u"Главное меню"
+    """ Main Menu OPDS """
+    title = u"Main Menu"
     link = "/opds"
     feed_type = NaviFeed
-    description = u"Главное меню каталога"
+    description = u"Main menu"
 
     def items(self):
         return MenuItem.objects.filter(group='0').order_by('order')
@@ -34,35 +36,35 @@ class MainFeed(Feed):
 
 
 class AuthorsCharsFeed(Feed):
-    """ Список букв фамилий авторов """
-    title = u"Выбор автора"
+    """ List of first chars of authors """
+    title = u"Select letter"
     link = "/opds/authors/"
     feed_type = NaviFeed
-    description = u"Меню с первыми буквами фамилий автора, " \
-                  u"для оптимизации поиска"
+    description = u"Select letter for list of authors, " \
+                  u"whom last-names starts with"
 
     def items(self):
         return Char.objects.all().order_by('char')
 
     def item_title(self, item):
-        return u"Авторы на %s" % item.char
+        return u"Last-names starts with %s" % item.char
 
     def item_description(self, item):
-        return u"Авторы на %s" % item.char
+        return u"Last-names starts with %s" % item.char
 
     def item_link(self, item):
         return item.get_absolute_url()
 
 
 class AuthorsFeed(Feed):
-    """ Список авторов на букву """
-    title = u"Список авторов на букву"
+    """ List of authors, whom last-name starts with char """
+    title = u"List of authors"
     link = "/opds/authors/"
     feed_type = NaviFeed
-    description = u"Авторы, чьи фамилии начинаются на выбранную букву"
+    description = u"List of authors, whom last-name starts with char"
 
-    def get_object(self, request, char_id):
-        return Char.objects.get(id=char_id)
+    def get_object(self, request, *args, **kwargs):
+        return Char.objects.get(id=args[0])
 
     def items(self, obj):
         return Author.objects.filter(last_name__startswith=obj.char).\
@@ -79,14 +81,14 @@ class AuthorsFeed(Feed):
 
 
 class AuthorBooksFeed(Feed):
-    """ Книги автора """
-    title = u"Список книг автора"
+    """ Author books """
+    title = u"List of books for author"
     link = "/opds/authors/"
     feed_type = BookFeed
-    description = u"Список книг автора"
+    description = u"List of books for author"
 
-    def get_object(self, request, author_id):
-        return Author.objects.get(id=author_id)
+    def get_object(self, request, *args, **kwargs):
+        return Author.objects.get(id=args[0])
 
     def items(self, obj):
         return Book.objects.filter(authors=obj).order_by('title')
@@ -114,11 +116,11 @@ class AuthorBooksFeed(Feed):
 
 
 class GenresFeed(Feed):
-    """ Список жанров """
-    title = u"Список жанров"
+    """ List of genres """
+    title = u"List of genres"
     link = "/opds/genres/"
     feed_type = NaviFeed
-    description = u"Список доступных жанров"
+    description = u"List of available genres"
 
     def items(self):
         return Genre.objects.all().order_by('name')
@@ -134,25 +136,25 @@ class GenresFeed(Feed):
 
 
 class GenreBooksFeed(AuthorBooksFeed):
-    """ Список книг в жанре """
-    title = u"Список книг в жанре"
+    """ Books in the genre """
+    title = u"List of books in the genre"
     link = "/opds/genre/"
     feed_type = BookFeed
-    description = u"Список книг в жанре"
+    description = u"List of books in the genre"
 
-    def get_object(self, request, genre_id):
-        return Genre.objects.get(id=genre_id)
+    def get_object(self, request, *args, **kwargs):
+        return Genre.objects.get(id=args[0])
 
     def items(self, obj):
         return Book.objects.filter(genre=obj)
 
 
 class SequencesFeed(Feed):
-    """ Список серий книг """
-    title = u"Список серий книг"
+    """ Books sequences """
+    title = u"List of book sequences"
     link = "/opds/sequence/"
     feed_type = NaviFeed
-    description = u"Список серий книг"
+    description = u"List of book sequences"
 
     def items(self):
         return Sequence.objects.all().order_by('name')
@@ -168,28 +170,28 @@ class SequencesFeed(Feed):
 
 
 class SequenceBooksFeed(AuthorBooksFeed):
-    """ Книги из серии """
-    title = u"Список книг серии"
+    """ Books from sequence """
+    title = u"List of books from sequence"
     link = "/opds/sequences/"
     feed_type = BookFeed
     description = u"Список книг серии"
 
-    def get_object(self, request, sequence_id):
-        return Sequence.objects.get(id=sequence_id)
+    def get_object(self, request, *args, **kwargs):
+        return Sequence.objects.get(id=args[0])
 
     def items(self, obj):
         return Book.objects.filter(sequence=obj).order_by('title')
 
 
 class BookFeed(Feed):
-    """ Пока неиспользуемый фид """
-    title = "test"
+    """ Book feed. temporarily unused """
+    title = "Test feed"
     link = "/opds/authors/"
     feed_type = BookFeed
-    description = "test main feed"
+    description = "TestFeed"
 
-    def get_object(self, request, book_id):
-        return Book.objects.get(id=book_id)
+    def get_object(self, request, *args, **kwargs):
+        return Book.objects.get(id=args[0])
 
     def items(self, obj):
         return Book.objects.filter(authors=obj).order_by('title')
