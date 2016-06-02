@@ -1,162 +1,101 @@
 <!DOCTYPE html>
-{% load rebase_url %}
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>WebLib</title>
         {% load staticfiles %}
-        <meta name="description" content="Cкачать книги fb2 бесплатно можно абсолютно для любой модели планшета или электронной книги «читалки». Согласитесь, достаточно удобно и практично. Зачем платить немалые деньги за настоящую книгу, если можно получить бесплатные книги fb2 на нашем сайте!" />
+        <meta name="description" content="Cкачать книги fb2 бесплатно" />
         <meta name="viewport" content="width=device-width">
-    	<link rel="icon" href="/favicon.ico" type="image/x-icon">
-    	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    	<link rel="stylesheet" href="{% static 'css/style2.css' %}" type="text/css" media="screen, projection" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="{% static 'css/style2.css' %}" type="text/css" media="screen, projection" />
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css" media="screen, projection" />
+        <link rel="stylesheet" href="{% static 'css/main.css' %}" type="text/css" media="screen, projection" />
     </head>
     <body>
-        <div class="bback"></div>
+        <div class="header">
+            <div class="logo">
+                <a href="/admin">
+                    <img src="/static/img/403.png" style="height:50px;width50px;">
+                </a>
+            </div>
+            <div class="title">
+                FB2 WEBLIB
+            </div>
+            <div class="search">
+                <form method="post" action='/search'>
+                    <input name="story" value="Поиск..." onblur="if(this.value=='') this.value='Поиск...';" onfocus="if(this.value=='Поиск...') this.value='';" type="text" class="f_search" />
+                </form>
+            </div>
+        </div>
         <div class="wrapper">
-            <header class="header">
-                <div class="logo">
-                    <a href="/admin">
-                        <img src="/static/img/403.png" style="height:50px;width50px;">
-                    </a>
+            <div class="breadcrumbs">
+                <span class="crumb">Main</span>
+                <span class="separator">></span>
+                <span class="crumb">A</span>
+                <span class="separator">></span>
+                <span class="crumb">Azimov</span>
+                <span class="separator">></span>
+                <span class="crumb">I - robot</span>
+            </div>
+            <div class="main-container">
+                <div class="left-menu">
+                    <ul class="m-menu">
+                        <li class="menu-item">{% block nav-home %}<strong>Главная</strong>{% endblock %}</li>
+                        <li class="menu-item">{% block nav-authors %}<a href="{% url 'letters' %}">Поиск автора</a>{% endblock %}</li>
+                        <li class="menu-item">{% block nav-genres %}<a href="{% url 'genres' %}">Жанры</a>{% endblock %}</li>
+                        <li class="menu-item">{% block nav-sequences %}<a href="{% url 'sequences' %}">Серии</a>{% endblock %}</li>
+                    </ul>
                 </div>
-                <div class="search">
-                    <form method="post" action=''>
-                        <input type="hidden" name="do" value="search" />
-                        <input type="hidden" name="subaction" value="search" />
-                        <input name="story" value="Поиск..." onblur="if(this.value=='') this.value='Поиск...';" onfocus="if(this.value=='Поиск...') this.value='';" type="text" class="f_search" />
-                    </form>
-                </div>
-                <div class="clr"></div>
-                <div class="catalog">
-                    {% for letter in letters %}
-                        <div class="menuf">
-                            <a href="/book/authors/{{letter}}">
-                                {{letter}}
-                            </a>
-                        </div>
-                    {% endfor %}
-                </div>
-            </header><!-- .header-->
-            <div class="middle">
                 <div class="container">
-                    <main class="content">
+                    <div class="content-title">
+                        {% block content-title %}
+                            <span>Последние добавленные книги</span>
+                        {% endblock %}
+                    </div>
+                    <div class="content">
                     {% block content %}
-                        <h1>Книги в формате fb2 бесплатно</h1>
-                        <div id='book-content'>
-                            {% for book in last_books %}
-                                <div class="post">
-                                <div style="display:inline;">
-                                    <a href="book/details/{{ book.id }}/" title="{{ book.title|safe }}">
-                                        <span class="cover cover-book">
-                                            {% if book.image %}
-                                                <img height="185" alt="{{ book.title }}" src="{{ book.image.url|rebase_url }}" class="cover-image" itemprop="image">
-                                            {% else %}
-                                                <img height="185" alt="{{ book.title }}" src="{{ ''|rebase_url:'empty' }}" class="cover-image" itemprop="image">
-                                            {% endif %}
-                                        </span>
+                        {% for book in last_books %}
+                            <div class="card-wrapper">
+                                <div class="card-cover">
+                                    <a href="{{ book.get_absolute_url }}" title="{{ book.title|safe }}">
+                                        {% if book.image %}
+                                            <img height="185" alt="{{ book.title }}" src="{{ book.get_cover_url }}" class="cover-image" itemprop="image">
+                                        {% endif %}
                                     </a>
                                 </div>
-                                <div class="btitle">
-                                    <a href="book/details/{{ book.id }}" title="{{ book.title|safe }}">
+                                <div class="author">
+                                    {% with book.authors.all|first as author %}
+                                        <a href="{{ author.get_absolute_url }}">
+                                            {{ author|safe }}
+                                        </a>
+                                    {% endwith %}
+                                </div>
+                                <div class="title">
+                                    <a href="{{ book.get_absolute_url }}" title="{{ book.title|safe }}">
                                         {{ book.title|safe }}
                                     </a>
                                 </div>
-    					        <div class="bauthor">
-                                    {% for author in book.authors.all %}
-                                        <a href="/book/author/{{ author.id }}/books/">
-                                            {{ author|safe }}
-                                        </a>
-                                    {% endfor %}
-                                </div>
-    				        </div>
-                            {% endfor %}
-                            <div class="rast-nav">
                             </div>
-                        </div>
-                        <div class="opisanie" style="float: left">
-                            <h2>Книги fb2</h2>
-                            Давно уже минули те времена, когда хорошие книги были настолько редки, что обладать таким сокровищем мог далеко не каждый. Сегодня все изменилось, а главное, в нашей жизни появился интернет, этот колоссальный источник самых последних книжных новинок, выпущенных в форматах .txt, <em>fb2</em> и многих других. Походы по книжным магазинам, столь популярные еще 15-20 лет назад, сегодня отходят на второй план. Многочисленные электронные книги и планшеты буквально вытеснили с рынка своих бумажных старших братьев. Среднестатистический пользователь сети сегодня  предпочитает тяжелым оригинальным изданиям <em>книги в формате fb2</em>.
-                            <br /><br />Мы не случайно уже 2 раза в этой статье упомянули книги fb2. Различные опросы и исследования наглядно показывают, что <em>бесплатные книги fb2</em> являются наиболее часто скачиваемыми, намного опередившими другие форматы. Впрочем, столь высокую популярность именно этого книжного формата можно легко объяснить сразу несколькими причинами.
-                            <br /><br /><h2>Причины популярности электронных книг в формате fb2</h2>
-                            Во-первых, <em>книги fb2</em> достаточно красочны и удобны. Вы найдете в файле <em>fb2</em> не только некую текстовую информацию, но также полностью перенесенное с бумажного варианта художественное оформление издания. Другие форматы не предусматривают столь широких возможностей и выглядят значительно «беднее».
-                            <br /><br />Во-вторых, <em>скачать fb2 бесплатно</em> можно абсолютно для любой модели планшета или электронной книги «читалки». Согласитесь, достаточно удобно и практично. Зачем платить немалые деньги за настоящую книгу, если можно получить бесплатные книги fb2! Гораздо проще купить однажды нужный вам девайс и закачать туда столько материала в формате fb2, сколько вам нужно.
-                            <br /><br />В-третьих, <em>fb2 скачать</em> сумеют даже те, кто не слишком разбирается в современных технологиях. Все установки происходят в автоматическом режиме, и пользователю остается лишь открыть книгу и наслаждаться любимыми произведениями.
-                            <br /><br /><h2>Ищете бесплатные книги fb2? Считайте, что вы их уже нашли!</h2>
-                            Как мы уже говорили, <em>книги в формате fb2</em> сегодня не так трудно найти, впрочем, есть одно «но». Дело в том, что на многих сайтах вам предложат скачать fb2 бесплатно… за деньги. Можете считать, что это просто маркетинговый ход, которым завлекаются доверчивые пользователи. Возможно, вас даже не попросят заплатить, а лишь предложат отправить «бесплатное» смс, которое, якобы, определит вас как реального посетителя. Не стоит доверять таким сайтам, поскольку они просто берут деньги «за воздух».
-                            <br /><br />Если вы хотите действительно скачать fb2 бесплатно, то делайте это на нашем сайте. В пользу нас говорит тот факт, что мы ежедневно работаем над пополнением нашей библиотеки. Ресурс разбит на тематические разделы, где каждый обязательно найдет что-то для себя. <em>FB2 скачать</em> не сложно, гораздо сложнее найти хороший ресурс. Вам повезло, ведь вы его уже нашли!
-                        </div>
-                    {% endblock %}
-                    </main><!-- .content -->
-                </div><!-- .container-->
-                <aside class="left-sidebar">
-                    <ul class="m_menu">
-                        {% for genre in genres %}
-                            {% if genre.name %}
-                                <li><a href="/book/genre/{{ genre.id }}/books">{{ genre.name }}</a> {{ genre.count }}</li>
-                            {% endif %}
                         {% endfor %}
-                    </ul>
-                    <div class="last-comments">
-                        <div class="title-lc">
-                            Последние отзывы
-                        </div>
-                        <div class="lcomm-item">
-            			    <div class="author-com">
-                                Ivanova Tanya
-                                <span>04.04.2014</span>
-                            </div>
-            			    <div class="kniga">
-                                <a href="/lubovnie-romani/4550-nepristoynoe-predlozhenie.html#comment-id-1870">
-                                    Непристойное предложение
-                                </a>
-                            </div>
-            			    <div class="text">
-                                книжка понравилась) читая отдыхаешь....
-                            </div>
-        		        </div>
-                        <div class="lcomm-item">
-                            <div class="author-com">
-                                Яна Малинка
-                                <span>03.04.2014</span>
-                            </div>
-    			            <div class="kniga">
-                                <a href="/bestsellers/3551-domashniy-front.html#comment-id-1866">
-                                    Домашний фронт
-                                </a>
-                            </div>
-    			            <div class="text">
-                                Ну вот и свершилось первое знакомство!
-                                Итак, история о жене, матери и... пилоте военного вертолёта в одном лице. Женщина на войне - это довольно таки инте ...
-                            </div>
-    		            </div>
+                    {% endblock %}
                     </div>
-                </aside><!-- .left-sidebar -->
-            </div><!-- .middle-->
-            <footer class="footer">
-                <div class="topbooks">
-                    <div class="title-tb">Выбор редакции</div>
-                        <div class="top-item">
-    		                <a href="/bestsellers/4703-nezabudki-dlya-tebya.html" title="Незабудки для тебя">
-                                <span class="cover cover-small-book">
-                                    <img height="100" alt="Обложка книги Незабудки для тебя" src="/uploads/posts/2014-02/1391739498_nora-roberts-22nezabudki-dlya-tebya.jpg" class="cover-image" style="background-image:url(/uploads/posts/2014-02/1391739498_nora-roberts-22nezabudki-dlya-tebya.jpg)">
-                                </span>
-                            </a>
-                            <div class="namebook">
-                                <a href="/bestsellers/4703-nezabudki-dlya-tebya.html" title="Незабудки для тебя">
-                                    Незабудки для тебя
-                                </a>
-                            </div>
-    		                <div class="topauthor">
-                                <a href="/tags/%CD%EE%F0%E0+%D0%EE%E1%E5%F0%F2%F1/">
-                                    Нора Робертс
-                                </a>
-                            </div>
-    	                    <div class="clear"></div>
-                        </div>
-                    <div class="clear"></div>
                 </div>
-            </footer><!-- .footer -->
-        </div><!-- .wrapper -->
+            </div>
+            <div class="footer">
+                <div class="opisanie" style="float: left">
+                    <h2>Книги fb2</h2>
+                    Давно уже минули те времена, когда хорошие книги были настолько редки, что обладать таким сокровищем мог далеко не каждый. Сегодня все изменилось, а главное, в нашей жизни появился интернет, этот колоссальный источник самых последних книжных новинок, выпущенных в форматах .txt, <em>fb2</em> и многих других. Походы по книжным магазинам, столь популярные еще 15-20 лет назад, сегодня отходят на второй план. Многочисленные электронные книги и планшеты буквально вытеснили с рынка своих бумажных старших братьев. Среднестатистический пользователь сети сегодня  предпочитает тяжелым оригинальным изданиям <em>книги в формате fb2</em>.
+                    <br /><br />Мы не случайно уже 2 раза в этой статье упомянули книги fb2. Различные опросы и исследования наглядно показывают, что <em>бесплатные книги fb2</em> являются наиболее часто скачиваемыми, намного опередившими другие форматы. Впрочем, столь высокую популярность именно этого книжного формата можно легко объяснить сразу несколькими причинами.
+                    <br /><br /><h2>Причины популярности электронных книг в формате fb2</h2>
+                    Во-первых, <em>книги fb2</em> достаточно красочны и удобны. Вы найдете в файле <em>fb2</em> не только некую текстовую информацию, но также полностью перенесенное с бумажного варианта художественное оформление издания. Другие форматы не предусматривают столь широких возможностей и выглядят значительно «беднее».
+                    <br /><br />Во-вторых, <em>скачать fb2 бесплатно</em> можно абсолютно для любой модели планшета или электронной книги «читалки». Согласитесь, достаточно удобно и практично. Зачем платить немалые деньги за настоящую книгу, если можно получить бесплатные книги fb2! Гораздо проще купить однажды нужный вам девайс и закачать туда столько материала в формате fb2, сколько вам нужно.
+                    <br /><br />В-третьих, <em>fb2 скачать</em> сумеют даже те, кто не слишком разбирается в современных технологиях. Все установки происходят в автоматическом режиме, и пользователю остается лишь открыть книгу и наслаждаться любимыми произведениями.
+                    <br /><br /><h2>Ищете бесплатные книги fb2? Считайте, что вы их уже нашли!</h2>
+                    Как мы уже говорили, <em>книги в формате fb2</em> сегодня не так трудно найти, впрочем, есть одно «но». Дело в том, что на многих сайтах вам предложат скачать fb2 бесплатно… за деньги. Можете считать, что это просто маркетинговый ход, которым завлекаются доверчивые пользователи. Возможно, вас даже не попросят заплатить, а лишь предложат отправить «бесплатное» смс, которое, якобы, определит вас как реального посетителя. Не стоит доверять таким сайтам, поскольку они просто берут деньги «за воздух».
+                    <br /><br />Если вы хотите действительно скачать fb2 бесплатно, то делайте это на нашем сайте. В пользу нас говорит тот факт, что мы ежедневно работаем над пополнением нашей библиотеки. Ресурс разбит на тематические разделы, где каждый обязательно найдет что-то для себя. <em>FB2 скачать</em> не сложно, гораздо сложнее найти хороший ресурс. Вам повезло, ведь вы его уже нашли!
+                </div>
+            </div>
+        </div>
     </body>
 </html>

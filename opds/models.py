@@ -6,6 +6,9 @@ class Char(models.Model):
     """ Char. Search optimisation """
     char = models.CharField(u"Char", max_length=3)
 
+    def get_authors_list_url(self):
+            return "/book/authors/%s" % self.char
+
     def get_absolute_url(self):
         return '/opds/authors/%s' % self.id
 

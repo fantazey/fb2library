@@ -47,6 +47,9 @@ class Genre(models.Model):
     def get_absolute_url_opds(self):
         return "/opds/genre/%d" % self.id
 
+    def get_absolute_url(self):
+        return "/book/genre/%d" % self.id
+
 
 class Sequence(models.Model):
     """ Sequence """
@@ -80,6 +83,9 @@ class Author(models.Model):
     def get_absolute_url_opds(self):
         return "/opds/author/%d/" % self.id
 
+    def get_absolute_url(self):
+        return "/book/author/%d/" % self.id
+
 
 class Translator(Author):
     """ Translator """
@@ -111,10 +117,11 @@ class SequenceBook(models.Model):
 class Book(models.Model):
     """ Книга """
     title = models.CharField(u'Title', max_length=300)
-    genre = models.ManyToManyField(Genre, verbose_name=u'Genres', null=True)
+    genre = models.ManyToManyField(Genre, verbose_name=u'Genres', null=True,
+                                   related_name='books')
     annotation = models.TextField(u'Annotation', null=True, blank=True)
     authors = models.ManyToManyField(Author, verbose_name=u'Authors',
-                                     related_name='authors')
+                                     related_name='books')
     lang = models.ForeignKey(Language, verbose_name=u'Language', null=True,
                              related_name=u'book_lang')
     src_lang = models.ForeignKey(Language, verbose_name=u'Original language',
@@ -177,3 +184,6 @@ class Book(models.Model):
         return ", ".join([
             "%s %s" % (author.last_name, author.first_name)
             for author in authors])
+
+
+

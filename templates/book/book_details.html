@@ -1,75 +1,70 @@
 {% extends "main/index.html" %}
-{% load rebase_url %}
+{% block nav-home %}<a href="{% url 'index' %}">Главная</a>{% endblock %}
+{% block nav-authors %}<a href="{% url 'letters' %}">Поиск автора</a>{% endblock %}
+{% block nav-genres %}<a href="{% url 'genres' %}">Жанры</a>{% endblock %}
+{% block nav-sequences %}<a href="{% url 'sequences' %}">Серии</a>{% endblock %}
+{% block content-title %}
+    {{ title }}
+{% endblock %}
 {% block content %}
-<div id='book-content'>
-    <div class="fullpost">
-        <table class="card">
-            <tr>
-                <td class="oblozhka">
-                    <span class="cover cover-large cover-large-book">
-                        {% if book.image %}
-                          <img alt="{{ book.title }}" src="{{ book.image.url|rebase_url }}" class="cover-image" itemprop="image">
-                        {% else %}
-                          <img alt="{{ book.title }}" src="{{ ''|rebase_url:'empty' }}" class="cover-image" itemprop="image">
-                        {% endif %}
-                    </span>
-                </td>
-                <td>
-                    <h1>{{ book.title|safe }}</h1>
-                    <div class="author">
-                        {% for author in book.authors.all %}
-                            <span style="display: block">
-                                <a href="/book/author/{{ author.id }}/books/">
-                                    {{ author|safe }}
-                                </a>
-                            </span>
-                        {% endfor %}
-                    </div>
-                    <div class="lcateg">
-                        <a href="/book/genre/{{ book.genre.id }}/books/">
-                            {% if book.genre.name %}
-                                {{ book.genre.name }}
+<div class='book-content'>
+    <div class="book-card">
+        <div class="book-cover">
+            {% if book.image %}
+                <img alt="{{ book.title }}" src="{{ book.get_cover_url }}" class="cover-image">
+            {% endif %}
+        </div>
+        <div class="book-description">
+            <div class="book-title">
+                <h1>{{ book.title|safe }}</h1>
+            </div>
+            <div class="book-authors">
+                <span>Авторы:</span>
+                {% for author in book.authors.all %}
+                        <a href="{{ author.get_absolute_url }}">
+                            {{ author|safe }}
+                        </a>
+                {% endfor %}
+            </div>
+            <div class="book-genres">
+                <span>Жанры:</span>
+                {% for genre in book.genre.all %}
+                        <a href="{{ genre.get_absolute_url }}">
+                            {% if genre.name %}
+                                {{ genre.name }}
                             {% else %}
-                                {{ book.genre.code }}
+                                {{ genre.code }}
                             {% endif %}
                         </a>
-                    </div>
-                    <div class="razd"></div>
-                    <div class="razd"></div>
-                    <div class="shortstory">
-                        {% if sequences %}
-                            {% for sequence in sequences %}
-                                <div class="seriya">
-                                    <b>Книга {{ sequence.num }}</b> из серии:
-                                    <a href="/book/sequence/{{ sequence.id }}/">
-                                        {{ sequence.name }}
-                                    </a>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                        <div id="news-id-4966" style="display:inline;">
-                            <div class="annotation">
-                                {{ book.annotation|safe }}
-                            </div>
-                            <br />
-                            <br />
-                            <div class="quote">
-                                Скачать в формате fb2:
-                                <br />
-                                <span class="attachment">
-                                    <a href="http://google.com" >
-                                        XXX.fb2
-                                    </a>
-                                        [999,999 Mb] (cкачиваний: -9)
-                                </span>
-                                <br />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="razd"></div>
-                </td>
-            </tr>
-        </table>
+                {% endfor %}
+            </div>
+            {% if book.sequence.all %}
+                <div class="book-sequences">
+                    <span>Серии:</span>
+                    {% for sequence in book.sequence.all %}
+                        <a href="/book/sequence/{{ sequence.id }}/">
+                            {{ sequence.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="book-annotation">
+                <span>Аннтоация:</span>
+                {{ book.annotation|safe }}
+            </div>
+            <div class="book-download">
+                <div class="quote">
+                    Скачать в формате fb2:
+                    <br />
+                    <span class="attachment">
+                        <a href="{{ book.get_download_url }}" >
+                            XXX.fb2
+                        </a>
+                        [999,999 Mb] (cкачиваний: -9)
+                    </span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

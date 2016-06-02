@@ -1,0 +1,236 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+div.header {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    height: 110px;
+    background: #eeeeee;
+    margin-bottom: 10px;
+    border-radius: 0;
+}
+.header > .logo {
+    display: flex;
+    flex-flow: row nowrap;
+    width: 60px;
+    height: 60px;
+    padding: 0 30px;
+}
+.header > .title {
+    font-size: 80px;
+    padding: 0 40px;
+}
+.header > .search {
+    padding: 0;
+    width: 200px;
+    float: none;
+
+}
+.wrapper {
+    min-width: 720px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+.wrapper > .breadcrumbs {
+    height: 16px;
+    width: 95%;
+    margin: 0 auto;
+    font-size: 16px;
+    background: #eeeeee;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 10px;
+    border-radius: 10px;
+}
+.breadcrumbs > .crumb {
+    color: #38b63c;
+    font-weight: bold;
+}
+.breadcrumbs > .separator {
+    color: #000000;
+    padding: 0px 10px;
+}
+.main-container {
+    width: 100%;
+    display: flex;
+    flex-flow: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin: 10px 0px;
+    background: white;
+}
+.main-container > .left-menu {
+    border: 1px solid #000000;
+    text-align: left;
+    display: flex;
+}
+.left-menu > .m-menu {
+    color: #d5d5d5;
+    font-size: 16px;
+    margin: 0px;
+    padding: 0px;
+}
+/*left menu button*/
+.m-menu li {
+    padding: 5px;
+    border: 1px solid #333333;
+    color: black;
+    background: linear-gradient(to bottom, #a5dd89, #2eda2e);
+    height: 50px;
+    width: 150px;
+}
+.m-menu li a {
+    color: #000000;
+}
+
+.main-container > .container {
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    text-align: left;
+    border: 0;
+    float: none;
+    overflow: auto;
+    width: 100%;
+    padding: 10px;
+}
+.container > .content-title {
+    font-size: 20px;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.container > .content {
+    padding: 10px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+.content > .card-wrapper {
+    margin: 0px 0px 15px 0px;
+    padding: 0;
+    width: 150px;
+    float: none;
+    color: #777777;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    text-align: center;
+    border: 2px solid #fff9d9;
+}
+.card-wrapper > .author a {
+    color: #888;
+    text-decoration: none;
+    font-size: 11px;
+}
+.card-wrapper > .title a {
+    font-size: 16px;
+    color: #000;
+    text-decoration: none;
+}
+.char-content {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+.char.card-wrapper{
+    margin: 10px;
+}
+.genre.card-wrapper {
+    width: 200px;
+    font-size: 20px;
+    border: 2px solid burlywood;
+    margin: 20px;
+    padding: 20px;
+}
+.char.card-wrapper .letter {
+    font-size: 40px;
+    border: 2px solid burlywood;
+    padding: 40px;
+}
+.authors-content {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.author.card-wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+.book-content{
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.book-list-container{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.book-list-container > .card-wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 150px;
+    margin: 0px 10px 10px 10px;
+    border: 2px solid burlywood;
+    border-radius: 5px;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+}
+.navigation {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+.book-card {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.book-description {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-left: 20px;
+}
+.book-title h1{
+    margin: 0;
+}
+.book-genres, .book-sequences,
+.book-annotation, .book-authors a{
+    font-size: 15px;
+}
+.book-genres > span,
+.book-sequences > span,
+.book-annotation > span,
+.book-authors > span {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.footer {
+    background-color: #ffffcc;
+    text-align: center;
+    padding: 15px 0 5px 0;
+    margin-top: 20px;
+    line-height: 1.7;
+}

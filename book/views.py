@@ -6,6 +6,8 @@ from django.db.models import Q
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from book.models import *
 from main.views import get_menu_data
+from opds.models import Char
+from battaries.decorators import render_to
 
 
 def library(request):
@@ -15,38 +17,49 @@ def library(request):
         context_instance=RequestContext(request)
     )
 
-
-def book_details(request, _id):
-    book = Book.objects.get(id=_id)
-    sequences = []
-    genres = Genre.objects.filter(name__isnull=False).order_by('name')
-    genres_info = []
-    for genre in genres:
-        genres_info.append({
-            'id': genre.id,
-            'name': genre.name,
-            'count': genre.book_set.count()
-        })
-    for sequence in book.sequence.all():
-        sequences.append({
-            'name': sequence.name,
-            'number': SequenceBook.objects.get(book=book,
-                                               sequence=sequence).number,
-            'id': sequence.id,
-        })
-    letters, genres = get_menu_data()
-    return render_to_response(
-        'book/book_details.html',
-        {
-            'book': book,
-            'sequences': sequences,
-            'genres': genres,
-            'letters': letters
-        },
-        context_instance=RequestContext(request))
+@render_to("book/letters.html")
+def letters(request):
+    """
+    Вывести список букв для поиска автора
+    """
+    title = u"Выберите первую букву фамилии автора"
+    return {
+        'letters': Char.objects.all().order_by('char'),
+        'title': title
+    }
 
 
+@render_to("book/genres.html")
+def genres(request):
+    title = u"Список жанров представленных в библиотеке"
+    return {
+        'genres': Genre.objects.all().order_by('name'),
+        'title': title
+    }
+
+
+@render_to("book/sequences.html")
+def sequences(request):
+    sequence_list = Sequence.objects.all().order_by('name')
+    paginator = Paginator(sequence_list, 10)
+    page = request.GET.get("page", 1)
+    try:
+        _sequences = paginator.page(page)
+    except EmptyPage:
+        _sequences = paginator.page(paginator.num_pages)
+    except PageNotAnInteger:
+        _sequences = paginator.page(1)
+    return {
+        'sequences': _sequences
+    }
+
+
+@render_to("book/authors_letter.html")
 def author_letter(request, letter):
+    """
+    Авторы с фамилией на букву letter
+    """
+    title = u"Авторы с фамилиями на букву %s" % letter
     if len(letter) != 1:
         raise Http404
     all_authors = Author.objects.filter(
@@ -62,19 +75,31 @@ def author_letter(request, letter):
         authors = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         authors = paginator.page(1)
-    letters, genres = get_menu_data()
-    return render_to_response(
-        'book/authors_letter.html',
-        {
-            'authors': authors,
-            'genres': genres,
-            'letters': letters
-        },
-        context_instance=RequestContext(request))
+    return {
+        'authors': authors,
+        'title': title
+    }
 
 
-def genre_books(request, _id):
-    all_books = Book.objects.filter(genre__id=_id).order_by('title')
+@render_to("book/book_details.html")
+def book_details(request, book_id):
+    """
+    Подробнее о книге
+    """
+    title = u"Книга"
+    book = Book.objects.get(id=book_id)
+    return {
+            'book': book,
+            'title': title
+    }
+
+
+@render_to('book/author_books.html')
+def genre_books(request, genre_id):
+    """
+    Книги жанра
+    """
+    all_books = Book.objects.filter(genre__id=genre_id).order_by('title')
     paginator = Paginator(all_books, 50)
     page = request.GET.get("page", 1)
     try:
@@ -83,22 +108,21 @@ def genre_books(request, _id):
         books = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         books = paginator.page(1)
-    letters, genres = get_menu_data()
-    return render_to_response(
-        'book/books_list.html',
-        {
-            'books': books,
-            'genres': genres,
-            'letters': letters
-        },
-        context_instance=RequestContext(request))
+    return {
+        'books': books,
+        'genres': genres,
+        'letters': letters
+    }
 
 
-def author_books(request, _id):
+@render_to("book/author_books.html")
+def author_books(request, author_id):
     """
     Книги автора
     """
-    all_books = Author.objects.get(id=_id).book_set.all().order_by('title')
+    author = Author.objects.get(id=author_id)
+    title = u"Книги автора: %s" % author.__unicode__()
+    all_books = author.books.all().order_by('title')
     paginator = Paginator(all_books, 50)
     page = request.GET.get("page", 1)
     try:
@@ -107,12 +131,7 @@ def author_books(request, _id):
         books = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         books = paginator.page(1)
-    letters, genres = get_menu_data()
-    return render_to_response(
-        'book/books_list.html',
-        {
-            'books': books,
-            'genres': genres,
-            'letters': letters
-        },
-        context_instance=RequestContext(request))
+    return {
+        'books': books,
+        'title': title
+    }

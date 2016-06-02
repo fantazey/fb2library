@@ -9,7 +9,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 
 
 def get_menu_data():
-    all_letters = [x[0] for x in Author.objects.all().order_by('last_name').values_list('last_name', flat=True)]
+    all_letters = [x[0] for x in Author.objects.all().order_by('last_name').values_list('last_name', flat=True) if len(x) > 0]
     letters = []
     for letter in all_letters:
         if not letter.upper() in letters:
@@ -20,10 +20,11 @@ def get_menu_data():
     genres = [{'id': genre.id, 'name': genre.name, 'count': genre.book_set.count()} for genre in genres]
     return letters, genres
 
+
 def index(request):
     """ Главная страница """
     letters, genres = get_menu_data()
-    last_books = Book.objects.all().order_by('id')[:20]
+    last_books = Book.objects.all().order_by('-id')[:20]
     return render_to_response(
         'main/index.html',
         {

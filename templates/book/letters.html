@@ -1,0 +1,21 @@
+{% extends "main/index.html" %}
+{% block nav-home %}<a href="{% url 'index' %}">Главная</a>{% endblock %}
+{% block nav-authors %}<strong>Поиск автора</strong>{% endblock %}
+{% block nav-genres %}<a href="{% url 'genres' %}">Жанры</a>{% endblock %}
+{% block nav-sequences %}<a href="{% url 'sequences' %}">Серии</a>{% endblock %}
+{% block content-title %}
+    {{ title }}
+{% endblock %}
+{% block content %}
+<div class='char-content'>
+    {% for char in letters %}
+        <div class="char card-wrapper">
+            <a href="{{ char.get_authors_list_url }}">
+                <div class="letter">
+                    {{ char.char }}
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
