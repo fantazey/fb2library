@@ -46,25 +46,17 @@ class CommonTag(object):
 
 class BookFile(CommonTag):
     """
-        Класс файла с книгой, в кострукторе класса реализуется разбиение файла
-        на блоки, и создание необходимых классов
+        Parsed file
     """
     def __init__(self, path=None):
         self.xml = ""
         self.file = path
-        # объект BeautifulStoneSoup и разобраная книга
         self.soup = self.book = None
         self.new_path = ""
         self.new_name = ""
         self.hash = ""
 
     def get_encoding(self):
-        """Получить кодировку"""
-        # пока это тупой поиск кодировки,
-        # так как BSS не всегда адекватно читает
-        # её из файла и пытается угадывать что попало
-        # пока проверяются только две кодировки
-        # todo: future исправить на что-либо умное
         from re import search as regsearch
         encoding = regsearch("xml.*encoding=[\'\"]([0-9a-zA-Z-]+)[\"\']",
                              self.xml).groups()[0]
@@ -76,23 +68,16 @@ class BookFile(CommonTag):
             return None
 
     def get_cover(self):
-        """
-        Разбираем информацию об обложке
-        """
         cover = None
         title_info = self.soup.description.find('title-info')
-        # нода есть
         if title_info.coverpage and title_info.coverpage.image:
             image = title_info.coverpage.image
-            # нода содержит аттрибут похожий на href
             if self.node_has_attr_like(image, 'href'):
                 attr_name = self.get_node_attr_like(image, 'href')
                 covername = image[attr_name].replace('#', '')
-                # ищем среди binary нужный там тег
                 binary = self.soup.find('binary', attrs={'id': covername})
                 if binary:
                     cover = CoverPage()
-                    # сохраняем base64 данные
                     cover.data = binary.contents[0]
                     cover.extension = covername.split('.')[-1]
                     cover_attrs = self.get_node_attrs(binary)
@@ -101,26 +86,22 @@ class BookFile(CommonTag):
         return cover
 
     def make_book(self):
-        """ Сделать экземплар объекта Book из файла
-        :return: экземпляр класса Book,разобраный и провереный
-        или None если возникла ошибка
         """
-        # если в конструктор передано имя файла и он существует
-        # то пытаемся открыть его, иначе выходим
+        :return: book Object or None
+        """
         if self.file is None or not os.path.exists(self.file):
-            # нечего открыть
+            # Nothing to do
             return None
         book_file = open(self.file, 'r')
         try:
             self.xml = book_file.read()
         except IOError:
-            # ошибка открытия файла - выходим
             return None
         finally:
             book_file.close()
         encoding = self.get_encoding()
-        # не определили кодировку, выходим
         if encoding is None:
+            # can't get encoding. Something strange. exit.
             return None
         self.soup = BeautifulStoneSoup(
             self.xml,
@@ -141,8 +122,7 @@ class BookFile(CommonTag):
 
     def get_new_name_path(self):
         """
-        Получить путь к файлу построенный
-        на фамилии автора и названии книги
+        :return: new file name and path for file
         """
         stops = ',:><|?*/\n\\"'
         title = self.book.title
@@ -162,18 +142,13 @@ class BookFile(CommonTag):
 
 
 class CoverPage(object):
-    """ Класс обложка """
     def __init__(self):
-        # base64 кодированная строка
         self.data = ""
-        # MIME тип изображения
         self.content_type = ""
-        # расширение файла
         self.extension = ""
 
 
 class Author(object):
-    """ Класс автора.Автор """
 
     def __init__(self, first="", last="", middle=""):
         self.first_name = first
@@ -188,42 +163,19 @@ class Author(object):
         ]).encode('utf-8')
 
     def format_names(self):
-        """
-        Первый символ каждого поля делаем заглавным
-        """
-        self.first_name = self.format_name(self.first_name)
-        self.last_name = self.format_name(self.last_name)
-        self.middle_name = self.format_name(self.middle_name)
-
-    @staticmethod
-    def format_name(string):
-        """
-        выполняет text-transform: capitalize над строкой
-        :param string: строка в которой заменяем первый символ на заглавный
-        :return: измененную строку, если длина больше 1
-        """
-        if len(string) > 1:
-            return string[0].upper() + string[1:].lower()
-        else:
-            return string
+        self.first_name = self.first_name.capitalize()
+        self.last_name = self.last_name.capitalize()
+        self.middle_name = self.middle_name.capitalize()
 
 
 class Translator(Author):
-    """
-    Класс Переводчик
-    Поля идентичны классу Author, поэтому пустой
-    Разделение идет чисто по содержимому
-    """
     def __init__(self, *args, **kwargs):
         super(Translator, self).__init__(*args, **kwargs)
 
 
 class Genre(object):
-    """ Класс Жанр """
     def __init__(self, code=""):
-        # код жанра, ex: love_contemporary
         self.code = code
-        # описание, на самом деле будет пустым почти постоянно, скорее всего
         if code in genres_types.keys():
             self.name = genres_types[code]
         else:
@@ -237,11 +189,8 @@ class Genre(object):
 
 
 class Sequence(object):
-    """ Класс Серия """
     def __init__(self, name=""):
-        # название серии
         self.name = name
-        # номер книги в серии
         self.number = ""
 
     def __repr__(self):
@@ -249,35 +198,20 @@ class Sequence(object):
 
 
 class Book(CommonTag):
-    """ Класс книги """
     def __init__(self):
-        # Название книги
         self.title = None
-        # аннотация
         self.annotation = None
-        # дата
         self.date = None
-        # язык
         self.lang = None
-        # исходных язык
         self.src_lang = None
-        # обложка хранится base64 строкой
         self.cover = None
-        # список авторов
         self.authors = []
-        # серии в которые включена книга
         self.sequences = []
-        # жанры книги
         self.genres = []
-        # переводчики книги
         self.translators = []
-        # исходная строка с данными о книге
         self.title_info = None
-        # исходная строка с данными об издателе
         self.publish_info = None
-        # информация об издательстве и издании
         self.publisher = None
-        # кодировка книги
         self.encoding = None
         self.uuid = None
 
@@ -286,8 +220,7 @@ class Book(CommonTag):
 
     def parse(self):
         """
-        Парсим блоки title_info и publish_info
-        собираем объект книги и со всем сопутствующим
+        Parse title_info and publish_info tags
         """
         self.parse_authors(_type='author')
         self.parse_authors(_type='translator')
@@ -298,10 +231,7 @@ class Book(CommonTag):
 
     def parse_authors(self, _type='author'):
         """
-        Вытаскиваем информацию об авторах или переводчиках и
-        сохраняет в соотвествующем поле
-        :param _type: тип разбираемой информации. авторы (author) или
-        переводчики (translators)
+        :param _type: define which object we well parse(Author or Translator)
         """
         if _type == 'author':
             object_class = Author

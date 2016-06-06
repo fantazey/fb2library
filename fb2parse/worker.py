@@ -11,8 +11,6 @@ os.environ["DJANGO_SETTINGS_MODULE"] = "fb2lib.settings"
 django.setup()
 from book.models import *
 from book.logger import Logger
-from fb2 import FBook
-from parse import PROJECT_ROOT
 
 
 # Логи потоков

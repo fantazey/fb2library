@@ -1,4 +1,7 @@
 import os
+from private_settings import DATABASES, COVERS, LIBRARY_PATH,\
+    SRC_BOOK_PATH, SITE_ID, IMAGE_SERVER, FILE_SERVER
+
 # Django settings for fb2library project.
 PROJECT_ROOT = os.path.abspath(
     os.path.join(
@@ -11,14 +14,10 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-     ('Dyatlov Andrew', 'fantazey@gmail.com'),
+     ('Dyatlov Andrei', 'fantazey@gmail.com'),
 )
 
 MANAGERS = ADMINS
-
-from private_settings import DATABASES, COVERS, LIBRARY_PATH,\
-    SRC_BOOK_PATH, SITE_ID, IMAGE_SERVER, FILE_SERVER
-
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
@@ -104,8 +103,13 @@ ROOT_URLCONF = 'fb2lib.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'fb2lib.wsgi.application'
 
-import os
-TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), '..', 'templates').replace('\\','/'),)
+TEMPLATE_DIRS = (
+    os.path.join(
+        os.path.dirname(__file__),
+        '..',
+        'templates'
+    ).replace('\\', '/'),
+)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
