@@ -13,25 +13,30 @@ from book.models import *
 from book.logger import Logger
 
 
-# Логи потоков
+# todo: all this code is too old. Should be updated with using fb2parse
+
+
+# Logs for threads
 LOG_FOLDER = os.path.join(PROJECT_ROOT, "Logs")
 LIB_ROOT = os.path.join(PROJECT_ROOT, "Root")
 BROKEN = os.path.join(LIB_ROOT, "Broken")
-# Книги в которых нет обязательных данных.
+
+# Books which doesn't has required data
 BROKEN_BOOKS = os.path.join(BROKEN, "Books")
-# Книги которые не получилось прочитать.
+
+# Books with errors on reading
 BROKEN_FILES = os.path.join(BROKEN, "Files")
-# Обложки книг
+
 COVERS = os.path.join(LIB_ROOT, "Covers")
-# Библиотека
+
+# Library root
 LIBRARY = os.path.join(LIB_ROOT, "Library")
-# Дубли
+
 DUPLICATE = os.path.join(LIB_ROOT, "Duplicate")
-# Каталог, который содержит книги для разбора
 
 
 def make_project_dirs():
-    """ Создаем необходимые каталоги """
+    """ Build required directories """
     for directory in [LIB_ROOT, BROKEN, BROKEN_BOOKS, BROKEN_FILES,
                       COVERS, LIBRARY, DUPLICATE, LOG_FOLDER]:
         if not os.path.exists(directory):
@@ -40,8 +45,8 @@ def make_project_dirs():
 
 class Walker(Thread):
     """
-    Класс выполняющий спокойную пешую прогулку по каталогам.
-    В случае обнаружения книги, он складывает название файла в очередь.
+    The one who walks on a directory tree and look around
+    If it will find book, add to queue
     """
     def __init__(self, source_folder, queue):
         super(Walker, self).__init__()
@@ -52,8 +57,7 @@ class Walker(Thread):
 
     def run(self):
         """
-         Двигаться по каталогу. Если архив - отдали работнику.
-         Если книга - добавили в очередь
+         Walk
         """
         for (_dir, sub_dir, files_here) in os.walk(self.source):
             for _file in files_here:
@@ -71,7 +75,8 @@ class Walker(Thread):
 
 class Worker(Thread):
     """
-    Рабочий. Выполняет обработку книг. Сохранение их в нужном месте
+    The one who made all of work.
+    READER_TYPE Take file from queue and parse it to Book object
     Рабочий с типом 1  перебирает файлы из очереди,
     если находит fb2 то пытается обработать его, чтобы получить FBook объект.
     Рабочий с типом 2 должен загружать информацию о найденных книгах в

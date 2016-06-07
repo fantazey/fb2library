@@ -15,11 +15,9 @@ from book.models import Book, Sequence, SequenceBook, Genre, Translator, \
 # Модуль в одном потоке бежит по файловой системе,
 # читает файлы, перекладывает их в другое место
 # сразу же добавляет в базу, упаковывает их
-
-
-# todo: 4 проверка дубликатов
-# todo: 5 добавение в базу
-# todo: 6 упаковка
+# todo: refactor this code.
+# The first step is parse books, and move them to library
+# saving to DB should be django-management command
 
 
 SOURCE = SRC_BOOK_PATH
@@ -27,7 +25,8 @@ LIBRARY = LIBRARY_PATH
 
 
 def get_path_elements(path):
-    """ Разбираем путь на части """
+    """ Build list of directories in path """
+    # sorry, i can't remember why i use this
     _path, _file = os.path.split(path)
     elements = []
     while 1:
@@ -45,7 +44,7 @@ def get_path_elements(path):
 
 
 def build_path(book_file):
-    """ Строим дерево каталогов """
+    """ Build directories tree for file"""
     name, path = book_file.get_new_name_path()
     start_path = LIBRARY
     elements = get_path_elements(path)
@@ -60,7 +59,7 @@ def build_path(book_file):
 
 
 def move_book(book_file):
-    # строим путь в ФС для книги
+    """ Move book to library """
     res = build_path(book_file)
     if res:
         _path = os.path.join(LIBRARY, book_file.new_path)
@@ -76,15 +75,11 @@ def main():
     for (_dir, sub_dir, files_here) in os.walk(SOURCE):
         for _file in files_here:
             start = datetime.now()
-            # собираем file-object книгу
             _file_path = os.path.join(_dir, _file)
             book_file = BookFile(_file_path)
-            # собираем class-object книгу
             res = book_file.make_book()
             if not res:
-                # если не получилось - пропускаем
                 continue
-            # перемещаем книгу
             res = move_book(book_file)
             if not res:
                 continue
@@ -96,6 +91,7 @@ def main():
 
 
 def save_cover(book_file):
+    """ Save book cover """
     if book_file.book.cover is not None:
         covername = book_file.hash
         coverpath = os.path.join(COVERS, covername[:4])
@@ -117,10 +113,9 @@ def save_cover(book_file):
 
 def save_book(book_file):
     """
-    book_file instance ob BookFile
+    Save book to DB
     """
     book = book_file.book
-    # Добавляем книгу
     if not Book.objects.filter(md5=book_file.hash).exists():
         obj = Book.objects.create(
             title=book_file.book.title,
@@ -149,7 +144,6 @@ def save_book(book_file):
         obj.src_lang = book_src_lang
         obj.save()
 
-    # Создаем жанры прочитанные в книге
     for b_genre in book.genres:
         if b_genre.code is not None:
             genre, cr = Genre.objects.get_or_create(code=b_genre.code,
@@ -160,7 +154,6 @@ def save_book(book_file):
         if obj:
             obj.genre.add(genre)
 
-    # Создаем авторов
     for _author in book.authors:
         author, cr = Author.objects.get_or_create(
             first_name=_author.first_name,
@@ -170,7 +163,6 @@ def save_book(book_file):
         if obj:
             obj.authors.add(author)
 
-    # добавляем переводчиков
     for _translator in book.translators:
         translator, cr = Translator.objects.get_or_create(
             first_name=_translator.first_name,
@@ -179,7 +171,6 @@ def save_book(book_file):
         )
         if obj:
             obj.translator.add(translator)
-    # Создаем серии
 
     for b_sequence in book.sequences:
         if b_sequence.name:

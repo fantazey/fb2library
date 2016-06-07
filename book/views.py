@@ -20,9 +20,9 @@ def library(request):
 @render_to("book/letters.html")
 def letters(request):
     """
-    Вывести список букв для поиска автора
+    Show list of letters
     """
-    title = u"Выберите первую букву фамилии автора"
+    title = u"choose first char of last-name"
     return {
         'letters': Char.objects.all().order_by('char'),
         'title': title
@@ -31,7 +31,7 @@ def letters(request):
 
 @render_to("book/genres.html")
 def genres(request):
-    title = u"Список жанров представленных в библиотеке"
+    title = u"List of genres"
     return {
         'genres': Genre.objects.all().order_by('name'),
         'title': title
@@ -57,9 +57,9 @@ def sequences(request):
 @render_to("book/authors_letter.html")
 def author_letter(request, letter):
     """
-    Авторы с фамилией на букву letter
+    Authors whom last-names startswith letter
     """
-    title = u"Авторы с фамилиями на букву %s" % letter
+    title = u"Authors whom last-names startswith %s" % letter
     if len(letter) != 1:
         raise Http404
     all_authors = Author.objects.filter(
@@ -83,10 +83,7 @@ def author_letter(request, letter):
 
 @render_to("book/book_details.html")
 def book_details(request, book_id):
-    """
-    Подробнее о книге
-    """
-    title = u"Книга"
+    title = u"Book"
     book = Book.objects.get(id=book_id)
     return {
         'book': book,
@@ -97,7 +94,7 @@ def book_details(request, book_id):
 @render_to('book/author_books.html')
 def genre_books(request, genre_id):
     """
-    Книги жанра
+    Books with genre genre_id
     """
     all_books = Book.objects.filter(genre__id=genre_id).order_by('title')
     paginator = Paginator(all_books, 50)
@@ -118,10 +115,10 @@ def genre_books(request, genre_id):
 @render_to("book/author_books.html")
 def author_books(request, author_id):
     """
-    Книги автора
+    Books of author author_id
     """
     author = Author.objects.get(id=author_id)
-    title = u"Книги автора: %s" % author.__unicode__()
+    title = u"Books of author: %s" % author.__unicode__()
     all_books = author.books.all().order_by('title')
     paginator = Paginator(all_books, 50)
     page = request.GET.get("page", 1)

@@ -1,19 +1,14 @@
 # -*- coding: utf-8 -*-
-import os
+
 from datetime import datetime
 from Queue import Queue
 from fb2parse import worker
+from settings import SOURCE, LOG_TEST
 
 
-# Dest folder. Here we create library tree
-PROJECT_ROOT = 'D:\\Projects\\proj\\_fb2to'
-# Source folder. Here we read books
-SOURCE = 'D:\\Projects\\proj\\_fb2from'
-
-LOG = os.path.join(PROJECT_ROOT, "log.txt")
-
-LOG_TEST = os.path.join(PROJECT_ROOT, "log_main.txt")
-
+###
+# todo: refactor this code
+# Here we try to search books in SOURCE and start few process to parse them
 
 def report_test(*args):
     """ Log all actions

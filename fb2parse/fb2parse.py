@@ -247,7 +247,6 @@ class Book(CommonTag):
             self.__dict__[field].append(author)
         else:
             for _author in authors_list:
-                # вытаскиваем словарь данных
                 data = self.get_author_names(_author)
                 author = object_class(
                     data['first'],
@@ -260,9 +259,9 @@ class Book(CommonTag):
     @staticmethod
     def get_author_names(node=None):
         """
-        :param node: BeautifulStoneSoup нода содержащая информацию о человеке
+        :param node: BeautifulStoneSoup node with info about author
         first,last,middle-names
-        :return: возвращает словарь с данными
+        :return: dictionary with data
         """
         names = ['first', 'last', 'middle']
         data = {'first': '', 'last': '', 'middle': ''}
@@ -275,8 +274,7 @@ class Book(CommonTag):
 
     def parse_genres(self):
         """
-        Вытаскиваем информацию о жанрах
-        :return: True если не было ошибок при разборе
+        Parse info about genre
         """
         for genre in self.title_info.findAll('genre'):
             if genre.string and len(genre.string.strip()) > 0:
@@ -284,11 +282,9 @@ class Book(CommonTag):
 
     def get_sequences(self, node):
         """
-        Серии могут быть в различных секциях описания книги
-        Поэтому метод вынесен отдельно.
-        :param node: родительская нода,
-        в которой ведем поиск информации о серии
-        :return: список объектов Sequence, которые были найдены в node
+        Sequences may be declared in publish-info and title-info
+        :param node: parent node where we looking for sequence
+        :return: list of Sequence
         """
         sequences = node.findAll('sequence')
         data = []
@@ -306,17 +302,17 @@ class Book(CommonTag):
 
     def parse_sequence(self):
         """
-        Вытаскиваем информацию о сериях
-        :return: True если не было ошибок при разборе
+        Parse information about sequences from title-info
         """
         self.sequences = self.get_sequences(self.title_info)
 
     @staticmethod
     def get_tag_text(tag_name, node):
         """
-        Получить текст-содержимое тэга
-        :param tag_name: - имя тэга, содержимое которого будем вытаскивать
-        :param node: родительская нода в которой выполняется поиск тэга
+        Get stripped text from node
+        :param tag_name: source for text content
+        :param node: parent node where we looking for tag_name
+        :return: String if tag_name has text content, None otherwise
         """
         if node.find(tag_name) and node.find(tag_name).string:
             return node.find(tag_name).string.strip()
@@ -325,23 +321,18 @@ class Book(CommonTag):
 
     def parse_other(self):
         """
-        Вытаскиваем оставшуюся информацию:
-        язык, дату,аннотацию, название
-        :return: True если не было ошибок при разборе
+        Parse misc data from title-info like language, date, etc
         """
         self.title = self.get_tag_text('book-title', self.title_info)
         self.date = self.get_tag_text('date', self.title_info)
         self.lang = self.get_tag_text('lang', self.title_info)
         self.src_lang = self.get_tag_text('src-lang', self.title_info)
-        # Аннтотация
         if self.title_info.annotation and self.title_info.annotation.contents:
             self.annotation = self.title_info.annotation.__str__()
 
     def parse_publisher(self):
         """
-        Вытаскиваем оставшуюся информацию:
-        язык, дату,аннотацию, название
-        :return: True если не было ошибок при разборе
+        Parse data about book publisher
         """
         publisher_info = PublishInfo()
         if self.publish_info:
@@ -356,9 +347,6 @@ class Book(CommonTag):
 
 
 class Publisher(object):
-    """
-    Класс Издатель
-    """
     def __init__(self, name=""):
         self.name = name
 
@@ -367,9 +355,6 @@ class Publisher(object):
 
 
 class PublishInfo(object):
-    """
-    Класс Информация об издании
-    """
     def __init__(self):
         self.publisher = self.year = self.city = self.isbn = None
         self.sequences = []
